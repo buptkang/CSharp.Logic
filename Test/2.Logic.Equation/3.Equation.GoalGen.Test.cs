@@ -46,8 +46,9 @@ namespace CSharpLogic
 
             //Assert.True(obj.Equals(25));
             var eq = new Equation(lhs, rhs);
-            EqGoal goal;
-            bool result = eq.IsEqGoal(out goal);
+            object obj;
+            bool result = eq.IsEqGoal(out obj);
+            var goal = obj as EqGoal;
             Assert.True(result);
             Assert.NotNull(goal);
             Assert.True(goal.Rhs.Equals(5));
@@ -57,7 +58,27 @@ namespace CSharpLogic
         public void Test_Equation_2()
         {
             // 9 = (a-4.0)^2+(2.0-6.0)^2
+            object pt1XCoord = new Var("a");
+            object pt1YCoord = 2.0;
+            object pt2XCoord = 4.0;
+            object pt2YCoord = 6.0;
 
+            var term1 = new Term(Expression.Subtract, new List<object>() { pt1XCoord, pt2XCoord });
+            var term11 = new Term(Expression.Power, new List<object>() { term1, 2.0 });
+            var term2 = new Term(Expression.Subtract, new List<object>() { pt1YCoord, pt2YCoord });
+            var term22 = new Term(Expression.Power, new List<object>() { term2, 2.0 });
+            var rhs = new Term(Expression.Add, new List<object>() { term11, term22 }); 
+            var eq = new Equation(9, rhs);
+
+            object obj;
+            bool result = eq.IsEqGoal(out obj);
+            var goals = obj as List<EqGoal>;
+            Assert.True(result);
+            Assert.NotNull(goals);
+            Assert.True(goals.Count == 2);
+          
+            //Assert.True(goal.Lhs.Equals(pt1XCoord));
+            //Assert.True(goal.Rhs.Equals(5));
         }
 
         [Test]
@@ -66,14 +87,14 @@ namespace CSharpLogic
             //x = 3
             var x = new Var('a');
             var eq = new Equation(x, 3);
-            EqGoal eqGoal;
-            bool result = eq.IsEqGoal(out eqGoal);
+            object obj;
+            bool result = eq.IsEqGoal(out obj);
             Assert.True(result);
 
             //x = y
             var y = new Var('y');
             eq = new Equation(x, y);
-            result = eq.IsEqGoal(out eqGoal);
+            result = eq.IsEqGoal(out obj);
             Assert.True(result);
         }
 
@@ -84,8 +105,9 @@ namespace CSharpLogic
             var x = new Var('x');
             var term = new Term(Expression.Add, new List<object>() { 2, 3 });
             var eq = new Equation(x, term);
-            EqGoal eqGoal;
-            bool result = eq.IsEqGoal(out eqGoal);
+            object obj; 
+            bool result = eq.IsEqGoal(out obj);
+            var eqGoal = obj as EqGoal;
             Assert.True(eqGoal.Traces.Count == 1);
             Assert.True(eqGoal.Lhs.Equals(x));
             Assert.True(eqGoal.Rhs.Equals(5));

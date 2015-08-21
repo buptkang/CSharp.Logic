@@ -1,18 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
 namespace CSharpLogic
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public partial class LogicSharp
     {
         #region Goals
 
-        public static Func<object,object,Func<Dictionary<object,object>, bool>> 
+        public static Func<object, object, Func<Dictionary<object, object>, bool>>
             Equal()
         {
             Func<object, object, Dictionary<object, object>, bool> functor = Unify;
@@ -34,8 +46,8 @@ namespace CSharpLogic
         /// <param name="goals"></param>
         /// <returns></returns>
 
-        public static IEnumerable<KeyValuePair<object,object>> logic_Any
-            (IEnumerable<Goal> g, Dictionary<object,object> substitutions)
+        public static IEnumerable<KeyValuePair<object, object>> logic_Any
+            (IEnumerable<Goal> g, Dictionary<object, object> substitutions)
         {
             List<Goal> goals = g.ToList();
             if (goals.Count() == 1)
@@ -43,7 +55,7 @@ namespace CSharpLogic
                 var goal = goals[0];
                 if (goal.Unify(substitutions))
                 {
-                    return substitutions;                    
+                    return substitutions;
                 }
                 else
                 {
@@ -68,7 +80,7 @@ namespace CSharpLogic
                         {
                             if (!values.Contains(pair))
                             {
-                                values.Add(pair);                                
+                                values.Add(pair);
                             }
                         }
                     }
@@ -81,7 +93,7 @@ namespace CSharpLogic
             }
         }
 
-        public static IEnumerable<KeyValuePair<object,object>> logic_All
+        public static IEnumerable<KeyValuePair<object, object>> logic_All
             (IEnumerable<Goal> g, Dictionary<object, object> substitutions)
         {
             List<Goal> goals = g.ToList();
@@ -126,7 +138,7 @@ namespace CSharpLogic
                     else
                     {
                         return null;
-                    }            
+                    }
                 }
                 return values;
             }
@@ -154,8 +166,8 @@ namespace CSharpLogic
                         }
                     }
                 }
-            } 
-            
+            }
+
             return result;
         }
 
@@ -167,7 +179,7 @@ namespace CSharpLogic
         {
             if (obj.Properties.ContainsKey(variable))
             {
-                return obj.Properties[variable];                
+                return obj.Properties[variable];
             }
             else
             {
@@ -234,10 +246,11 @@ namespace CSharpLogic
 
         public class EarlyGoalException : Exception
         {
-            public EarlyGoalException(string msg) : base()
+            public EarlyGoalException(string msg)
+                : base()
             {
-                
-            }            
+
+            }
         }
 
         #endregion

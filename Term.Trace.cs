@@ -1,18 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
 namespace CSharpLogic
 {
-    /// <summary>
-    /// Substitution or term
-    /// </summary>
-    public partial class Term : DyLogicObject
-        , IAlgebraLogic, IEval
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+
+    public partial class Term
     {
-        public void GenerateTrace(object source, object target, 
+        public void GenerateTrace(object source, object target,
                                   string rule, string appliedRule)
         {
             Term currentTerm;
@@ -49,7 +59,7 @@ namespace CSharpLogic
                 else
                 {
                     var ts = new TraceStep(currentTerm, target, rule, appliedRule);
-                    Traces.Add(ts);                    
+                    Traces.Add(ts);
                 }
             }
         }
@@ -60,7 +70,7 @@ namespace CSharpLogic
             var lst = Args as List<object>;
             Debug.Assert(lst != null);
 
-            for (int i = 0; i < lst.Count-1; i++)
+            for (int i = 0; i < lst.Count - 1; i++)
             {
                 var localTerm = lst[i] as Term;
                 if (localTerm != null)
@@ -69,7 +79,7 @@ namespace CSharpLogic
                     if (result) return true;
                 }
 
-                localTerm = lst[i+1] as Term;
+                localTerm = lst[i + 1] as Term;
                 if (localTerm != null)
                 {
                     bool result = localTerm.SearchArithList(obj1, obj2, out output);
@@ -80,7 +90,7 @@ namespace CSharpLogic
                 {
                     output = lst;
                     return true;
-                }              
+                }
             }
             return false;
         }
@@ -89,7 +99,7 @@ namespace CSharpLogic
         {
             returnLst = null;
             var lst = Args as List<object>;
-            Debug.Assert(lst!= null);
+            Debug.Assert(lst != null);
             foreach (var tempObj in lst)
             {
                 if (tempObj.Equals(obj))

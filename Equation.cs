@@ -1,10 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
 namespace CSharpLogic
 {
+    using System.Collections.Generic;
+
     public partial class Equation : DyLogicObject, IEquationLogic, IEval
     {
         #region Properties and Constructors
@@ -14,7 +27,7 @@ namespace CSharpLogic
         public object Rhs { get; set; }
         public bool IsGenerated { get; set; }
 
-        public Equation() 
+        public Equation()
         {
             CachedEntities = new HashSet<object>();
             CachedObjects = new HashSet<KeyValuePair<object, object>>();
@@ -47,7 +60,7 @@ namespace CSharpLogic
         public Equation(Equation eq)
         {
             EqLabel = eq.EqLabel;
-            var lhsVar  = eq.Lhs as Var;
+            var lhsVar = eq.Lhs as Var;
             var lhsTerm = eq.Lhs as Term;
             if (lhsVar != null)
             {
@@ -62,7 +75,7 @@ namespace CSharpLogic
                 Lhs = eq.Lhs;
             }
 
-            var rhsVar  = eq.Rhs as Var;
+            var rhsVar = eq.Rhs as Var;
             var rhsTerm = eq.Rhs as Term;
             if (rhsVar != null)
             {
@@ -159,7 +172,7 @@ namespace CSharpLogic
         {
             if (Rhs != null)
             {
-                return string.Format("{0}={1}", Lhs.ToString(), Rhs.ToString());                
+                return string.Format("{0}={1}", Lhs.ToString(), Rhs.ToString());
             }
             else
             {

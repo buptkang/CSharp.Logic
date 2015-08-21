@@ -1,8 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
 namespace CSharpLogic
 {
@@ -28,62 +38,5 @@ namespace CSharpLogic
         {
             return new TraceStep(Source, Target, Rule, AppliedRule);
         }
-    }
-
-    public static class TraceUtils
-    {
-/*        public static void MoveTraces(Term fromTerm, Term toTerm)
-        {
-            List<TraceStep> traces = fromTerm.Traces;
-            if (traces.Count == 0) return;
-            toTerm.Traces.AddRange(traces);
-        }*/
-
-        public static object Generate(this Term term, object obj1, object obj)
-        {
-            var originLst = term.Args as List<object>;
-            Debug.Assert(originLst != null);
-            if (originLst.Count == 1) return obj;
-
-            int index = -1;
-            for (int i = 0; i < originLst.Count; i++)
-            {
-                if (originLst[i].Equals(obj1))
-                {
-                    index = i;
-                    break;
-                }
-            }
-            Debug.Assert(index != -1);
-            var lst = new List<object>();
-            lst.AddRange(originLst.GetRange(0, index));
-            lst.Add(obj);
-            lst.AddRange(originLst.GetRange(index + 1, originLst.Count - index - 1));
-            return new Term(term.Op, lst);
-        }
-
-        public static object Generate(this Term term, object obj1, object obj2, object obj)
-        {
-            var originLst = term.Args as List<object>;
-            Debug.Assert(originLst != null);
-            if (originLst.Count == 2) return obj;
-
-            int index = -1;
-            for (int i = 0; i < originLst.Count; i++)
-            {
-                if (originLst[i].Equals(obj1))
-                {
-                    index = i;
-                    break;
-                }
-            }
-            Debug.Assert(index != -1);
-            var lst = new List<object>();
-            lst.AddRange(originLst.GetRange(0, index));
-            lst.Add(obj);
-            lst.AddRange(originLst.GetRange(index + 2, originLst.Count - index - 2));
-            return new Term(term.Op, lst);
-        }
-
     }
 }
