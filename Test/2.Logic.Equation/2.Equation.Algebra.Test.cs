@@ -40,6 +40,8 @@ namespace CSharpLogic
             Assert.NotNull(outputEq);
             Assert.True(outputEq.ToString().Equals("(x-3)=0"));
             Assert.True(equation.Traces.Count == 6);
+
+            //Test ig
         }
 
         [Test]
