@@ -53,7 +53,7 @@ namespace CSharpLogic
             Assert.NotNull(goal);
             Assert.True(goal.Rhs.Equals(5));
 
-            //change it
+            //test it again.
         }
 
         [Test]
