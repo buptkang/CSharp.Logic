@@ -17,9 +17,14 @@
 namespace CSharpLogic
 {
     using System.Diagnostics;
+    using System.Collections.Generic;
 
     public partial class Equation
     {
+        //Cached symbols for non-concrete objects
+        public HashSet<object> CachedEntities { get; set; }
+        private HashSet<KeyValuePair<object, object>> CachedObjects;
+
         public object Eval()
         {
             //verification purpose

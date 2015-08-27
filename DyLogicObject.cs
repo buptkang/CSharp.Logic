@@ -25,14 +25,20 @@ namespace CSharpLogic
         public List<TraceStep> Traces = new List<TraceStep>();
         public int TraceCount { get { return Traces.Count; } }
 
-        public List<TraceStep> CloneTrace()
+        //Tutoring Space
+        public List<string> StrategyTraces = new List<string>();
+        public bool StrategyShowed = false;
+
+        public void CloneTrace(out List<TraceStep> steps, out List<string> strategy)
         {
-            return Traces.Select(ts => ts.Clone()).ToList();
+            steps = Traces.Select(ts => ts.Clone()).ToList();
+            strategy = StrategyTraces;
         }
 
         public void ClearTrace()
         {
             Traces = new List<TraceStep>();
+            StrategyTraces = new List<string>();
         }
 
         #region Dynamic Properties

@@ -17,11 +17,23 @@
 namespace CSharpLogic
 {
     using System.Collections.Generic;
+    using System.Linq;
 
-    public partial class Equation
+    public abstract partial class ShapeSymbol
     {
-        //Cached symbols for non-concrete objects
-        public HashSet<object> CachedEntities { get; set; }
-        private HashSet<KeyValuePair<object, object>> CachedObjects;
+        public List<TraceStep> Traces = new List<TraceStep>();
+        public List<string> StrategyTraces = new List<string>();
+
+        public void CloneTrace(out List<TraceStep> steps, out List<string> strategy)
+        {
+            steps = Traces.Select(ts => ts.Clone()).ToList();
+            strategy = StrategyTraces;
+        }
+
+        public void ClearTrace()
+        {
+            Traces = new List<TraceStep>();
+            StrategyTraces = new List<string>();
+        }
     }
 }
