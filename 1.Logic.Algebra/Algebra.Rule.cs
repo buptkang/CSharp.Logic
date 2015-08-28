@@ -70,5 +70,7 @@ namespace CSharpLogic
             return null;
         }
 
+        public static string AlgebraicStrategy = "Manipulate Algebraic Expression by using rules.";
+
     }
 }
