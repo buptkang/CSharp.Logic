@@ -27,7 +27,6 @@ namespace CSharpLogic
 
         //Tutoring Space
         public List<string> StrategyTraces = new List<string>();
-        public bool StrategyShowed = false;
 
         public void CloneTrace(out List<TraceStep> steps, out List<string> strategy)
         {
