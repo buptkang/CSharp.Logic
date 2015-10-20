@@ -12,7 +12,7 @@ Backup/
 *.user
 *.sln.docstates
 
-*.csproj
+
 
 # Build results
 
