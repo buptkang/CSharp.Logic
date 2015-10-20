@@ -259,6 +259,9 @@ namespace CSharpLogic
 
         public static bool IsNumeric(object obj)
         {
+            var term = obj as Term;
+            if (term != null) return false;
+
             bool result;
             try
             {
@@ -289,5 +292,45 @@ namespace CSharpLogic
             return false;
         }
 
+        public static bool NumericApproximateEqual(object obj1, object obj2)
+        {
+            bool result = NumericEqual(obj1, obj2);
+            if (result) return true;
+
+            double dNum1, dNum2;
+            bool bool1 = IsDouble(obj1, out dNum1);
+            bool bool2 = IsDouble(obj2, out dNum2);
+
+            if (bool1 && bool2)
+            {
+                dNum1 = Math.Round(dNum1, 1);
+                dNum2 = Math.Round(dNum2, 1);
+                double gap = Math.Abs(dNum1 - dNum2);
+                if (gap < 0.00001) return true;
+            }
+            return false;
+        }
+
+        public static bool NumericEqual(object obj1, object obj2)
+        {
+            double dNum1, dNum2;
+            bool bool1 = IsDouble(obj1, out dNum1);
+            bool bool2 = IsDouble(obj2, out dNum2);
+
+            if (bool1 && bool2)
+            {
+                double gap = Math.Abs(dNum1 - dNum2);
+                if (gap < 0.00001) return true;
+            }
+            return false;
+        }
+
+        public static object CheckObj(object obj)
+        {
+            int iNum;
+            bool bool1 = IsInt(obj, out iNum);
+            if (bool1) return iNum;
+            return obj;
+        }
     }
 }

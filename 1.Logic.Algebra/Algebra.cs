@@ -443,6 +443,12 @@ namespace CSharpLogic
                 var term2 = obj2 as Term;
                 if (term1 == null || term2 == null) return false;
 
+                if (term1.Op.Method.Name.Equals("Power") ||
+                    term2.Op.Method.Name.Equals("Power"))
+                {
+                    return false;
+                }
+
                 var lst1 = term1.Args as List<object>;
                 var lst2 = term2.Args as List<object>;
                 Debug.Assert(lst1 != null);

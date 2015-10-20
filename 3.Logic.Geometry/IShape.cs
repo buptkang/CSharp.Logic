@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Collections.ObjectModel;
+
 namespace CSharpLogic
 {
     using System;
@@ -115,13 +117,25 @@ namespace CSharpLogic
 
         protected ShapeSymbol(Shape _shape)
         {
-            CachedSymbols = new HashSet<ShapeSymbol>();
+            CachedSymbols = new ObservableCollection<ShapeSymbol>();
             CachedGoals = new HashSet<KeyValuePair<object, EqGoal>>();
             Shape = _shape;
         }
 
         public abstract object RetrieveConcreteShapes();
+
         public abstract object GetOutputType();
+
+        //forward-solving (Query Search)
         public abstract bool UnifyProperty(string label, out object obj);
+
+        public abstract bool UnifyExplicitProperty(EqGoal goal);
+        
+        //backward-solving (Goal Search)
+        public abstract bool UnifyProperty(EqGoal goal, out object obj);
+
+        public abstract bool UnifyShape(ShapeSymbol ss);
+       
+        public abstract bool ApproximateMatch(object obj);
     }
 }

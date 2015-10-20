@@ -16,20 +16,28 @@
 
 namespace CSharpLogic
 {
-    public static class ArithRule
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Text;
+    public partial class Term
     {
-        public static string CalcRule(object method, object left,
-            object right, object result)
+        #region Reification
+
+        public object Reify(EqGoal eqGoal)
         {
-            return string.Format("Make the calculation: {1} {0} {2}",
-                method.ToString(), left.ToString(), right.ToString());
+            Dictionary<object, object> dict = eqGoal.ToDict();
+            return Reify(dict);
         }
 
-        public static string CalcRule(object method)
+        public Term Reify(Dictionary<object, object> s)
         {
-            return string.Format("Think about Calculation: {0}", method.ToString());
+            var gArgs = LogicSharp.Reify(Args, s);
+            return new Term(Op, gArgs);
         }
 
-        public static string ArithmeticStrategy = "Manipulate Arithmetic Expression using add, substraction, multiply rules.";
+        #endregion
     }
 }

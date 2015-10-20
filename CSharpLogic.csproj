@@ -49,6 +49,7 @@
     <Compile Include="0.Logic.Arithmetic\Arithmetic.cs" />
     <Compile Include="2.Logic.Equation\Equations.cs" />
     <Compile Include="2.Logic.Equation\Equations.Rule.cs" />
+    <Compile Include="3.Logic.Geometry\Geometric.Rule.cs" />
     <Compile Include="3.Logic.Geometry\IShape.Eval.cs" />
     <Compile Include="3.Logic.Geometry\IShape.cs" />
     <Compile Include="3.Logic.Geometry\IShape.Trace.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Core.cs" />
     <Compile Include="Equation.cs" />
     <Compile Include="Equation.Eval.cs" />
+    <Compile Include="Equation.Reify.cs" />
     <Compile Include="Equation.Trace.cs" />
     <Compile Include="Goal.cs" />
     <Compile Include="Goal.Eval.cs" />
@@ -66,7 +68,9 @@
     <Compile Include="Substitution.Rule.cs" />
     <Compile Include="Term.cs" />
     <Compile Include="Term.Eval.cs" />
+    <Compile Include="Term.Reify.cs" />
     <Compile Include="Term.Trace.cs" />
+    <Compile Include="Test\0.Basic\0.Utils.cs" />
     <Compile Include="Test\1.Logic.Algebra\AlgebraArithIntegrateTest.cs" />
     <Compile Include="Test\1.Logic.Algebra\AlgebraReificationTest.cs" />
     <Compile Include="Test\1.Logic.Algebra\AlgebraTest.cs" />
@@ -90,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Compile Include="Test\2.Logic.Equation\4.Equation.GenShape.Test.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

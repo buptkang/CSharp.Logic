@@ -43,7 +43,7 @@ namespace CSharpLogic
         public bool ContainsVar()
         {
             var lst = Args as List<object>;
-            Debug.Assert(lst != null);
+            if (lst == null) return false;
             foreach (var obj in lst)
             {
                 var variable = obj as Var;
@@ -75,7 +75,11 @@ namespace CSharpLogic
                     var term1 = obj as Term;
                     if (term1 != null) return term1.ContainsVar(variable);
                     var variable1 = obj as Var;
-                    if (variable1 != null) return variable1.Equals(variable);
+                    if (variable1 != null)
+                    {
+                        bool tempresult = variable1.Equals(variable);
+                        if (tempresult) return true;
+                    }
                 }
                 return false;
             }
@@ -185,7 +189,27 @@ namespace CSharpLogic
                 Debug.Assert(lst != null);
                 Debug.Assert(lst1 != null);
                 if (lst.Count != lst1.Count) return false;
-                return !lst.Where((t, i) => !t.Equals(lst1[i])).Any();
+
+                for (int i = 0; i < lst.Count; i++)
+                {
+                    var curr1 = lst[i];
+                    var curr2 = lst1[i];
+
+                    bool isNum1 = LogicSharp.IsNumeric(curr1);
+                    bool isNum2 = LogicSharp.IsNumeric(curr2);
+                    bool result;
+                    if (isNum1 && isNum2)
+                    {
+                        result = LogicSharp.NumericEqual(curr1, curr2);
+                    }
+                    else
+                    {
+                        result = curr1.Equals(curr2);
+                    }
+                    if (!result) return false;
+                }
+                return true;
+                //return !lst.Where((t, i) => !t.Equals(lst1[i])).Any();
             }
             return false;
         }
@@ -203,7 +227,7 @@ namespace CSharpLogic
                 var lTerm = tuple.Item1;
                 var rTerm = tuple.Item2;
 
-                builder.Append(lTerm.ToString());
+                builder.Append(lTerm);
 
                 if (Op.Method.Name.Equals("Add"))
                 {
@@ -230,98 +254,183 @@ namespace CSharpLogic
             var lst = Args as List<object>;
             if (lst != null)
             {
-                #region List Format
-                if (lst.Count == 1)
+                for (int i = 0; i < lst.Count; i++)
                 {
-                    return lst[0].ToString();
-                }
+                    var variable = lst[i] as Var;
+                    bool number = LogicSharp.IsNumeric(lst[i]);
+                    var localTerm = lst[i] as Term;
 
-                //builder.Append('(');
-                int innerVisualElement = 0;
-                int index = 0;
-                do
-                {
-                    bool noOp = false;
-                    if (lst[index].Equals(1) && Op.Method.Name.Equals("Multiply"))
+                    #region Var
+                    if (variable != null)
                     {
-                        index++;
-                        if (index < lst.Count) continue;
-                        else break;
-                    }
-                    builder.Append(lst[index]);
-                    innerVisualElement++;
-                    if (Op.Method.Name.Equals("Add"))
-                    {
-                        #region Add Format
-                        if (index + 1 < lst.Count)
+                        if (Op.Method.Name.Equals("Add"))
                         {
-                            bool isNumeric = LogicSharp.IsNumeric(lst[index + 1]);
-                            if (isNumeric)
+                            if (i != 0)
                             {
-                                double dd = double.Parse(lst[index + 1].ToString());
-                                if (dd < 0.0)
-                                {
-                                    noOp = true;
-                                    builder.Append(lst[index + 1]);
-                                    index += 1;
-                                    innerVisualElement++;
-                                }
+                                builder.Append("+");
                             }
                         }
 
-                        if (!noOp && index != lst.Count - 1)
+                        if (Op.Method.Name.Equals("Power"))
                         {
-                            builder.Append('+');
+                            if (i != 0)
+                            {
+                                builder.Append("^");
+                            }
                         }
-                        #endregion
+                        builder.Append(variable.ToString());
                     }
-                    else if (Op.Method.Name.Equals("Multiply"))
-                    {
-                        if (index != lst.Count - 1)
-                        {
-                            builder.Append('*');
-                        }
-                    }
-                    else if (Op.Method.Name.Equals("Divide"))
-                    {
-                        if (index != lst.Count - 1)
-                        {
-                            builder.Append('/');
-                        }
-                    }
-                    index++;
-                } while (index < lst.Count);
+                    #endregion
 
-                //builder.Append(')');
-                if (innerVisualElement > 1)
-                {
-                    var str = builder.ToString();
-                    var bb = new StringBuilder();
-                    bb.Append('(').Append(str).Append(')');
-                    return bb.ToString();
+                    #region Numerics
+                    if (number)
+                    {
+                        if (Op.Method.Name.Equals("Add"))
+                        {
+                            if (i != 0)
+                            {
+                                double dnum;
+                                bool result = LogicSharp.IsDouble(lst[i], out dnum);
+                                if (dnum < 0.0)
+                                {
+                                    builder.Append("-");
+                                    double absNum = Math.Abs(dnum);
+                                    builder.Append(absNum);
+                                }
+                                else
+                                {
+                                    builder.Append("+");
+                                    builder.Append(lst[i].ToString());
+                                }
+                            }
+                            else
+                            {
+                                builder.Append(lst[i].ToString());
+                            }
+                        }
+                        else if (Op.Method.Name.Equals("Multiply"))
+                        {
+                            double dnum;
+                            LogicSharp.IsDouble(lst[i], out dnum);
+                            double absNum = Math.Abs(dnum) - 1.0;
+                            if (absNum > 0.0001)
+                            {
+                                builder.Append(lst[i].ToString());
+                            }
+                        }
+                        else if (Op.Method.Name.Equals("Divide"))
+                        {
+                            if (i != 0)
+                            {
+                                builder.Append("/");
+                                builder.Append(lst[i].ToString());
+                            }
+                            else
+                            {
+                                builder.Append(lst[i].ToString());
+                            }
+
+                        }
+                        else if (Op.Method.Name.Equals("Power"))
+                        {
+                            if (i != 0)
+                            {
+                                builder.Append("^");
+                            }
+                            builder.Append(lst[i].ToString());
+                        }
+                    }
+                    #endregion
+
+                    #region Term
+                    if (localTerm != null)
+                    {
+                        //precatch
+                        if (Op.Method.Name.Equals("Add"))
+                        {
+                            if (i != 0)
+                            {
+                                bool result = localTerm.InvertOp();
+                                if (!result)
+                                {
+                                    builder.Append("+");
+                                }
+                                else
+                                {
+                                    builder.Append("-");
+                                }
+                            }
+                            builder.Append(localTerm.ToString());
+                        }
+
+                        if (Op.Method.Name.Equals("Multiply") ||
+                            Op.Method.Name.Equals("Power")
+                            )
+                        {
+                            bool needBrace = false;
+                            needBrace = localTerm.NeedBracket();
+                            if (needBrace)
+                            {
+                                builder.Append("(");
+                                builder.Append(localTerm.ToString());
+                                builder.Append(")");
+                            }
+                            else
+                            {
+                                builder.Append(localTerm.ToString());
+                            }
+                        }
+
+                        if (Op.Method.Name.Equals("Divide"))
+                        {
+                            if (i != 0)
+                            {
+                                builder.Append("/");
+                            }
+                            bool needBrace = false;
+                            needBrace = localTerm.NeedBracket();
+                            if (needBrace)
+                            {
+                                builder.Append("(");
+                                builder.Append(localTerm.ToString());
+                                builder.Append(")");
+                            }
+                            else
+                            {
+                                builder.Append(localTerm.ToString());
+                            }
+                        }
+                    }
+                    #endregion
                 }
-                #endregion
             }
-
 
             return builder.ToString();
         }
 
-        #endregion
-
-        #region Reification
-
-        public object Reify(EqGoal eqGoal)
+        private bool NeedBracket()
         {
-            Dictionary<object, object> dict = eqGoal.ToDict();
-            return Reify(dict);
+            var lst = Args as List<object>;
+
+            if (lst == null) return false;
+
+            if (lst.Count > 1) return true;
+            return false;
         }
 
-        public Term Reify(Dictionary<object, object> s)
+        private bool InvertOp()
         {
-            var gArgs = LogicSharp.Reify(Args, s);
-            return new Term(Op, gArgs);
+            var lst = Args as List<object>;
+
+            if (lst == null) return false;
+            double dnum;
+            bool result = LogicSharp.IsDouble(lst[0], out dnum);
+            if (!result) return false;
+            if (dnum < 0.0) return true;
+            return false;
         }
+
+
 
         #endregion
     }

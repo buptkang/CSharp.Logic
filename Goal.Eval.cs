@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Linq;
+
 namespace CSharpLogic
 {
     using System.Collections.Generic;
@@ -52,26 +54,49 @@ namespace CSharpLogic
 
     public static class EquationExtension
     {
-        public static bool IsEqGoal(this Equation eq, out object goal)
+        public static bool IsEqGoal(this Equation eq, out object goal, bool allowEval = true)
         {
             goal = null;
-            Equation outputEq;
-            bool? result = eq.Eval(out outputEq, false);
-            if (result != null) return false;
 
-            if (SatisfyGoalCondition(outputEq))
+            if (!allowEval)
             {
-                var eqGoal = new EqGoal(outputEq);
-                eqGoal.Traces = eq.Traces;
-                goal = eqGoal;
-                return true;
+                if (SatisfyGoalCondition(eq))
+                {
+                    var lst = new List<object>();
+                    var goalTemp = new EqGoal(eq);
+                    lst.Add(goalTemp);
+                    return true;
+                }
+                return false;
             }
 
-            result = eq.Eval(out outputEq, true);
-            if (result != null) return false;
+            eq.Eval();
+            if (eq.CachedEntities.Count == 1)
+            {
+                var outEq = eq.CachedEntities.ToList()[0] as Equation;
+                if (outEq != null && SatisfyGoalCondition(outEq))
+                {
+                    goal = new EqGoal(outEq) {Traces = eq.Traces};
+                    return true;
+                }
+            }
 
-            //MoveTerms()
-            //TODO Goal Eval
+            if (eq.CachedEntities.Count > 1)
+            {
+                var lst = new List<object>();
+                foreach (var temp in eq.CachedEntities.ToList())
+                {
+                    var eqTemp = temp as Equation;
+                    if (eqTemp != null && SatisfyGoalCondition(eqTemp))
+                    {
+                        var goalTemp = new EqGoal(eqTemp) { Traces = eqTemp.Traces };
+                        lst.Add(goalTemp);
+                    }
+                }
+                if (lst.Count == 0) return false;
+                goal = lst;
+                return true;
+            }
             return false;
         }
 
@@ -79,13 +104,8 @@ namespace CSharpLogic
         {
             var lhs = eq.Lhs;
             var rhs = eq.Rhs;
-            return Var.IsVar(lhs);
-        }
-
-        private static Equation MoveTerms(Equation eq)
-        {
-            //TODO
-            return null;
+            bool rhsNumeral = LogicSharp.IsNumeric(rhs);
+            return Var.IsVar(lhs) && rhsNumeral;
         }
     }
 }

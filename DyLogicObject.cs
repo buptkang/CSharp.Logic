@@ -14,6 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+using System.Diagnostics;
+
 namespace CSharpLogic
 {
     using System.Collections.Generic;
@@ -22,23 +25,48 @@ namespace CSharpLogic
 
     public class DyLogicObject : DynamicObject
     {
-        public List<TraceStep> Traces = new List<TraceStep>();
-        public int TraceCount { get { return Traces.Count; } }
+        #region Trace API
 
-        //Tutoring Space
-        public List<string> StrategyTraces = new List<string>();
+        public List<TraceStep> _innerLoop = new List<TraceStep>();
 
-        public void CloneTrace(out List<TraceStep> steps, out List<string> strategy)
+        public List<Tuple<object,object>> Traces = new List<Tuple<object, object>>();
+
+        public List<Tuple<object, object>> CloneTrace()
         {
-            steps = Traces.Select(ts => ts.Clone()).ToList();
-            strategy = StrategyTraces;
+            return null;
+        }
+
+        public void GenerateATrace(string strategy)
+        {
+            var tuple = new Tuple<Object, object>(strategy, _innerLoop); 
+            Traces.Add(tuple);
+            _innerLoop = new List<TraceStep>();
+        }
+
+        public void ImportTrace(List<Tuple<object,object>> trace)
+        {
+            Traces = trace;
+        }
+
+        public void ImportTrace(DyLogicObject obj)
+        {
+            foreach (var tuple in obj.Traces)
+            {
+                Traces.Add(tuple);
+            }
+            foreach (var tempObj in obj._innerLoop)
+            {
+                _innerLoop.Add(tempObj);                
+            }
         }
 
         public void ClearTrace()
         {
-            Traces = new List<TraceStep>();
-            StrategyTraces = new List<string>();
+            _innerLoop.Clear();
+           Traces.Clear();
         }
+
+        #endregion
 
         #region Dynamic Properties
 

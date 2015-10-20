@@ -14,15 +14,41 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+
 namespace CSharpLogic
 {
+    using System.Collections.ObjectModel;
     using System.Collections.Generic;
     using System.Linq;
 
+    public delegate void ReifyUpdateHandler(object sender, EventArgs args);
+
+    public class ReifyEventArgs : EventArgs
+    {
+        public ShapeSymbol CurrentShapeSymbol { get; set; }
+
+        public ReifyEventArgs(ShapeSymbol ss)
+        {
+            CurrentShapeSymbol = ss;
+        }
+    }
+
     public abstract partial class ShapeSymbol
     {
+        public event ReifyUpdateHandler ReifyShapeUpdated;
+
+        protected virtual void RaiseReify(EventArgs e)
+        {
+            if (ReifyShapeUpdated != null)
+            {
+                ReifyShapeUpdated(this, e);
+            }
+        }
+
         //Cached symbols for non-concrete objects
-        public HashSet<ShapeSymbol> CachedSymbols { get; set; }
+        public ObservableCollection<ShapeSymbol> CachedSymbols { get; set; }
+      
         public HashSet<KeyValuePair<object, EqGoal>> CachedGoals { get; set; }
 
         public bool ContainGoal(EqGoal goal)
@@ -55,6 +81,6 @@ namespace CSharpLogic
                 result = field;
             }
             return result; 
-        }    
+        }
     }
 }

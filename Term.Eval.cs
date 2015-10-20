@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Net.Configuration;
+
 namespace CSharpLogic
 {
     using System;
@@ -70,7 +72,28 @@ namespace CSharpLogic
             //Evaluation Loop Algorithm:
             //1: Outer Loop Algebra Eval
             //2: Inner Loop Arithmetic Eval
-            object obj = AlgebraLaws(this);
+
+            bool algebra = ContainsVar();
+
+            this.ClearTrace();
+
+            object obj;
+            if (algebra)
+            {
+                obj = AlgebraLaws(this);
+                if (_innerLoop != null && _innerLoop.Count != 0)
+                {
+                    GenerateATrace(AlgebraRule.AlgebraicStrategy);
+                }
+            }
+            else
+            {
+                obj = this.Arithmetic(this);
+                if (_innerLoop != null && _innerLoop.Count != 0)
+                {
+                    GenerateATrace(ArithRule.ArithmeticStrategy);
+                }
+            }
             //Undo indentity law
             var term = obj as Term;
             if (term != null) return term.Beautify();
@@ -127,7 +150,6 @@ namespace CSharpLogic
                     localTerm0 = localObj;
                 }
             } while (hasChange);
-
             return localObj;
         }
 

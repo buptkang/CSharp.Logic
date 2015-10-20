@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+
 namespace CSharpLogic
 {
     using System.Collections.Generic;
@@ -121,6 +123,13 @@ namespace CSharpLogic
                 if (result) return true;
             }
 
+            var lhsTerm = Lhs as Term;
+            if (lhsTerm != null)
+            {
+                result = lhsTerm.ContainsVar(variable);
+                if (result) return true;
+            }
+
             var rhsVar = Rhs as Var;
             if (rhsVar != null)
             {
@@ -145,6 +154,11 @@ namespace CSharpLogic
             {
                 equation.Rhs = rhs.Clone();
             }
+
+            equation.Traces = new List<Tuple<object, object>>();
+            equation._innerLoop = new List<TraceStep>();
+            equation.CachedEntities = new HashSet<object>();
+            equation.CachedObjects = new HashSet<KeyValuePair<object, object>>();
 
             return equation;
         }

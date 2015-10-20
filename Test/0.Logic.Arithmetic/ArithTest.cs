@@ -32,7 +32,7 @@ namespace CSharpLogic
             object obj = term.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.Equals(6));
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace CSharpLogic
             object obj = term.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.Equals(-4));
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace CSharpLogic
             object obj = term.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.Equals(6));
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -70,7 +70,7 @@ namespace CSharpLogic
             object obj = term1.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.Equals(7));
-            Assert.True(term1.Traces.Count == 2);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace CSharpLogic
             object obj = term1.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.Equals(-5));
-            Assert.True(term1.Traces.Count == 2);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         [Test]
@@ -112,6 +112,15 @@ namespace CSharpLogic
             var term = new Term(Expression.Power, new List<object>() { 9, 0.5 });
             object obj = term.Eval();
             Assert.True(obj.Equals(3));
+        }
+
+        [Test]
+        public void Term_Arith_9()
+        {
+            //(-1)*0
+            var term = new Term(Expression.Multiply, new List<object>() { -1, 0 });
+            object obj = term.Eval();
+            Assert.True(obj.Equals(0));
         }
     }
 }

@@ -41,5 +41,25 @@ namespace CSharpLogic
             Assert.True(obj.Equals(4));
             Assert.True(term1.Traces.Count == 1);
         }
+
+        [Test]
+        public void Term_Algebra_Reify_2()
+        {
+            /*
+             *  //a*b=> 
+             *  //a=1
+             */
+            var y = new Var('y');
+            var a = new Var('a');
+            var b = new Var('b');
+            var term = new Term(Expression.Multiply, new List<object>() { a, b });
+            //Assert.True(term.ToString().Equals("(y+y)"));
+            var eqGoal = new EqGoal(a, 1);
+            var term1 = term.Reify(eqGoal) as Term;
+            Assert.NotNull(term1);
+            var obj = term1.Eval() as Var;
+            Assert.NotNull(obj);
+        }
+
     }
 }

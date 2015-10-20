@@ -29,5 +29,7 @@ namespace CSharpLogic
         {
             return string.Format("Consider substitute given knowledge to question");
         }
+
+        public static string SubstitutionStrategy = "Substitute existing knowledge into the question knowledge pattern.";
     }
 }

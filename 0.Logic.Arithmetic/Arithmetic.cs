@@ -75,18 +75,7 @@ namespace CSharpLogic
                     }
                 }
             } while (madeChanges);
-
-/*
-            if ()
-            {
-                var objCalc = Calculate(term.Op, objs[0], objs[1]);
-                
-                rootTerm.GenerateTrace(objs[0], objs[1], objCalc, rule);
-                return localTerm.Substitute(objs[0], objs[1], objCalc);
-            }
-*/           
-            //return localTerm;
-
+        
             var lstArgs = localTerm.Args as List<object>;
             if (lstArgs.Count == 1) return lstArgs[0];
             return localTerm;

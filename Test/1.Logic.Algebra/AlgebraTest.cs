@@ -60,7 +60,7 @@ namespace CSharpLogic
             object result = a.EvalAlgebra();
             Assert.NotNull(result);
             Assert.True(result.ToString().Equals("(9*x)"));
-            Assert.True(a.Traces.Count == 2);
+            Assert.True(a.Traces.Count == 1);
         }
 
         [Test]
@@ -75,7 +75,11 @@ namespace CSharpLogic
             object result = term1.EvalAlgebra();
             Assert.NotNull(result);
             Assert.True(result.ToString().Equals("(a+2)"));
-            Assert.True(term1.Traces.Count == 4);
+            Assert.True(term1.Traces.Count == 1);
+
+            var lst = term1.Traces[0].Item2 as List<TraceStep>;
+            Assert.NotNull(lst);
+            Assert.True(lst.Count == 4);
         }
 
         [Test]
@@ -90,7 +94,11 @@ namespace CSharpLogic
             object result = term1.EvalAlgebra();
             Assert.NotNull(result);
             Assert.True(result.ToString().Equals("((2*a)+2)"));
-            Assert.True(term1.Traces.Count == 4);
+            Assert.True(term1.Traces.Count == 1);
+
+            var lst = term1.Traces[0].Item2 as List<TraceStep>;
+            Assert.NotNull(lst);
+            Assert.True(lst.Count == 4);
         }
 
         #endregion
@@ -126,7 +134,7 @@ namespace CSharpLogic
             object result = term.EvalAlgebra();
             Assert.NotNull(result);
             Assert.True(result.ToString().Equals("(2*x)"));
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -139,7 +147,7 @@ namespace CSharpLogic
             object result = term1.EvalAlgebra();
             Assert.NotNull(result);
             Assert.True(result.ToString().Equals("(3*y)"));
-            Assert.True(term1.Traces.Count == 2);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         [Test]
@@ -215,7 +223,7 @@ namespace CSharpLogic
             obj = term1.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("(3*y)"));
-            Assert.True(term1.Traces.Count == 2);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         [Test]
@@ -228,7 +236,7 @@ namespace CSharpLogic
             object obj = term.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("(2*y)"));
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -241,7 +249,7 @@ namespace CSharpLogic
             object obj = term.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("(3*y)"));
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -255,7 +263,7 @@ namespace CSharpLogic
             object obj = term.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("(-1*y)"));
-            Assert.True(term.Traces.Count == 4);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -270,7 +278,7 @@ namespace CSharpLogic
             object obj = term.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("(x+((a+1)*y))"));
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
 
         [Test]
@@ -283,7 +291,7 @@ namespace CSharpLogic
             object obj = term1.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("((3*x)+3)"));
-            Assert.True(term1.Traces.Count == 4);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         [Test]
@@ -321,7 +329,7 @@ namespace CSharpLogic
             object obj = term1.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("(6*x)"));
-            Assert.True(term1.Traces.Count == 2);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         [Test]
@@ -334,7 +342,7 @@ namespace CSharpLogic
             object obj = term1.Eval();
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("(a+2)"));
-            Assert.True(term1.Traces.Count == 2);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         #endregion

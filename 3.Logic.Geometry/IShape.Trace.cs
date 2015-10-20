@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+
 namespace CSharpLogic
 {
     using System.Collections.Generic;
@@ -21,19 +23,34 @@ namespace CSharpLogic
 
     public abstract partial class ShapeSymbol
     {
-        public List<TraceStep> Traces = new List<TraceStep>();
-        public List<string> StrategyTraces = new List<string>();
-
-        public void CloneTrace(out List<TraceStep> steps, out List<string> strategy)
+        public void GenerateATrace(string strategy)
         {
-            steps = Traces.Select(ts => ts.Clone()).ToList();
-            strategy = StrategyTraces;
+            var tuple = new Tuple<Object, object>(strategy, _innerLoop); 
+            Traces.Add(tuple);
+            _innerLoop = new List<TraceStep>();
+        }
+
+        public List<TraceStep> _innerLoop = new List<TraceStep>();
+
+        public List<Tuple<object, object>> Traces = new List<Tuple<object, object>>();
+
+        public void CloneTrace()
+        {
         }
 
         public void ClearTrace()
         {
-            Traces = new List<TraceStep>();
-            StrategyTraces = new List<string>();
+            _innerLoop.Clear();
+           Traces.Clear();
+        }
+
+        public void ImportTrace(DyLogicObject obj)
+        {
+            if (obj.Traces.Count == 0) return;
+            foreach (var tuple in obj.Traces)
+            {
+                Traces.Add(tuple);
+            }
         }
     }
 }

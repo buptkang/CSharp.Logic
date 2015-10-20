@@ -48,19 +48,118 @@ namespace CSharpLogic
 
         public override bool Equals(object obj)
         {
-            var eq = obj as EqGoal;
+            var eqGoal = obj as EqGoal;
+            if (eqGoal != null)
+            {
+                if (Rhs == null) return Lhs.Equals(eqGoal.Lhs);
+
+                bool isNum1 = LogicSharp.IsNumeric(Rhs);
+                bool isNum2 = LogicSharp.IsNumeric(eqGoal.Rhs);
+                bool result;
+                if (isNum1 && isNum2)
+                {
+                    result = LogicSharp.NumericEqual(Rhs, eqGoal.Rhs);
+                }
+                else
+                {
+                    result = Rhs.Equals(eqGoal.Rhs);
+                }
+                return Lhs.Equals(eqGoal.Lhs) && result;
+            }
+
+            var eq = obj as Equation;
             if (eq != null)
             {
                 if (Rhs == null) return Lhs.Equals(eq.Lhs);
-                return Lhs.Equals(eq.Lhs) && Rhs.Equals(eq.Rhs);
+                bool isNum1 = LogicSharp.IsNumeric(Rhs);
+                bool isNum2 = LogicSharp.IsNumeric(eq.Rhs);
+                bool result;
+                if (isNum1 && isNum2)
+                {
+                    result = LogicSharp.NumericEqual(Rhs, eq.Rhs);
+                }
+                else
+                {
+                    result = Rhs.Equals(eq.Rhs);
+                }
+
+                if (eq.Lhs == null) return false;
+                return Lhs.ToString().Equals(eq.Lhs.ToString()) && result;
             }
+
             return false;
+        }
+
+        public bool ApproximateMatch(object obj)
+        {
+            var eqGoal = obj as EqGoal;
+            if (eqGoal != null)
+            {
+                if (Rhs == null) return Lhs.Equals(eqGoal.Lhs);
+                bool isNum1 = LogicSharp.IsNumeric(Rhs);
+                bool isNum2 = LogicSharp.IsNumeric(eqGoal.Rhs);
+                bool result;
+                if (isNum1 && isNum2)
+                {
+                    result = LogicSharp.NumericApproximateEqual(Rhs, eqGoal.Rhs);
+                }
+                else
+                {
+                    result = Rhs.Equals(eqGoal.Rhs);
+                }
+                return Lhs.Equals(eqGoal.Lhs) && result;
+            }
+
+            var eq = obj as Equation;
+            if (eq != null)
+            {
+                if (Rhs == null) return Lhs.Equals(eq.Lhs);
+                bool isNum1 = LogicSharp.IsNumeric(Rhs);
+                bool isNum2 = LogicSharp.IsNumeric(eq.Rhs);
+                bool result;
+                if (isNum1 && isNum2)
+                {
+                    result = LogicSharp.NumericApproximateEqual(Rhs, eq.Rhs);
+                }
+                else
+                {
+                    result = Rhs.Equals(eq.Rhs);
+                }
+
+                if (eq.Lhs == null) return false;
+                return Lhs.ToString().Equals(eq.Lhs.ToString()) && result;
+            }
+
+            return false;
+        }
+
+
+        public bool Concrete
+        {
+            get { return Var.IsVar(Lhs) && LogicSharp.IsNumeric(Rhs); }
         }
 
         public override int GetHashCode()
         {
             if (Rhs == null) return Lhs.GetHashCode();
             return Lhs.GetHashCode() ^ Rhs.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            double dNum;
+            bool isNum = LogicSharp.IsDouble(Rhs, out dNum);
+
+            if (isNum)
+            {
+                int iNum;
+                bool isInteger = LogicSharp.IsInt(Rhs, out iNum);
+                if (isInteger) return base.ToString();
+
+                double roundD = Math.Round(dNum, 4);
+                return string.Format("{0}={1}", Lhs, roundD);
+            }
+            return base.ToString();
         }
     }
 
@@ -94,9 +193,11 @@ namespace CSharpLogic
         /// <returns></returns>
         public static EqGoal GetLatestDerivedGoal(this EqGoal goal)
         {
-            //pre-processing of goal
+            throw new Exception("TODO");
+
+           /* //pre-processing of goal
             EqGoal tempGoal;
-            if (goal.TraceCount != 0)
+            if (goal.Traces.Count != 0)
             {
                 var trace = goal.Traces[0];
                 Debug.Assert(trace.Target != null);
@@ -108,7 +209,7 @@ namespace CSharpLogic
             {
                 tempGoal = goal;
             }
-            return tempGoal;
+            return tempGoal;*/
         }
     }
 }

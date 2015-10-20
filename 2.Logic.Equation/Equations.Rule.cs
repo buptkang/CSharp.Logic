@@ -53,5 +53,7 @@ namespace CSharpLogic
             }
             return null;
         }
+
+        public static string EqStrategy = "Manipulate Equation by using algebraic and equational rules.";
     }
 }

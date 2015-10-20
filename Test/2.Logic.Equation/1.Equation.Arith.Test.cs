@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Linq;
+
 namespace CSharpLogic
 {
     using NUnit.Framework;
@@ -35,13 +37,18 @@ namespace CSharpLogic
             Assert.False(result);
             Assert.True(equation.ToString().Equals("(1+2)=3"));
 
-            Equation outputEq;
-            bool? evalResult = equation.Eval(out outputEq);
-            Assert.NotNull(evalResult);
-            Assert.True(evalResult.Value);
-            Assert.NotNull(outputEq);
-            Assert.True(outputEq.ToString().Equals("3=3"));
-            Assert.True(equation.Traces.Count == 1);
+            object obj = equation.Eval();
+            Assert.NotNull(obj);
+            var satisfied = obj as bool?;
+            Assert.NotNull(satisfied);
+            Assert.True(satisfied.Value);
+
+            Assert.True(equation.CachedEntities.Count == 1);
+            var cachedEq = equation.CachedEntities.ToList()[0] as Equation;
+            Assert.NotNull(cachedEq);
+
+            Assert.True(cachedEq.ToString().Equals("3=3"));
+            Assert.True(cachedEq.Traces.Count == 1);
         }
 
         [Test]
@@ -54,12 +61,17 @@ namespace CSharpLogic
             Assert.False(result);
             Assert.True(equation.ToString().Equals("(1+2)=4"));
 
-            Equation outputEq;
-            bool? evalResult = equation.Eval(out outputEq);
-            Assert.NotNull(evalResult);
-            Assert.False(evalResult.Value);
-            Assert.NotNull(outputEq);
-            Assert.True(outputEq.ToString().Equals("3=4"));
+            object obj = equation.Eval();
+            Assert.NotNull(obj);
+            var satisfied = obj as bool?;
+            Assert.NotNull(satisfied);
+            Assert.False(satisfied.Value);
+            Assert.True(equation.CachedEntities.Count == 1);
+            var cachedEq = equation.CachedEntities.ToList()[0] as Equation;
+            Assert.NotNull(cachedEq);
+
+            Assert.True(cachedEq.ToString().Equals("3=4"));
+            Assert.True(cachedEq.Traces.Count == 1);
         }
 
         [Test]
@@ -72,13 +84,13 @@ namespace CSharpLogic
             Assert.False(result);
             Assert.True(equation.ToString().Equals("(1+2+3)=6"));
 
-            Equation outputEq;
+            object outputEq;
             bool? evalResult = equation.Eval(out outputEq);
             Assert.NotNull(evalResult);
             Assert.True(evalResult.Value);
             Assert.NotNull(outputEq);
             Assert.True(outputEq.ToString().Equals("6=6"));
-            Assert.True(equation.Traces.Count == 2);
+            Assert.True(equation.Traces.Count == 1);
         }
 
         [Test]
@@ -91,13 +103,19 @@ namespace CSharpLogic
             Assert.False(result);
             Assert.True(equation.ToString().Equals("(2*3)=7"));
 
-            Equation outputEq;
+            object outputEq;
             bool? evalResult = equation.Eval(out outputEq);
             Assert.NotNull(evalResult);
             Assert.False(evalResult.Value);
             Assert.NotNull(outputEq);
             Assert.True(outputEq.ToString().Equals("6=7"));
-            Assert.True(equation.Traces.Count == 2);
+            Assert.True(equation.Traces.Count == 1);
+        }
+
+        [Test]
+        public void Test_Arith_5()
+        {
+            //d=root(25)
         }
 
         #endregion

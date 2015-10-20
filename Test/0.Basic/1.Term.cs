@@ -48,6 +48,89 @@ namespace CSharpLogic
         }
 
         [Test]
+        public void Test_print2()
+        {
+            var term00 = new Term(Expression.Add, new List<object>(){1,1});
+            var x = new Var('x');
+            var term0 = new Term(Expression.Multiply, new List<object>() {term00, x});
+
+            var term1 = new Term(Expression.Add, new List<object>() {term0, 1, -4});
+
+            Assert.True(term00.ToString().Equals("1+1"));
+
+            Assert.True(term0.ToString().Equals("(1+1)x"));
+            
+            Assert.True(term1.ToString().Equals("(1+1)x+1-4"));
+        }
+
+        [Test]
+        public void Test_print3()
+        {
+            var x = new Var('x');
+            var term0 = new Term(Expression.Multiply, new List<object>() {3, x});
+            var y = new Var('y');
+            var term1 = new Term(Expression.Multiply, new List<object>() {-1, y});
+            var term = new Term(Expression.Add, new List<object>() {term0, term1});
+            Assert.True(term.ToString().Equals("3x-y"));
+        }
+
+        [Test]
+        public void Test_Print4()
+        {
+            //d=2^2
+            var t1 = new Term(Expression.Power, new List<object>() {2, 2});
+            Assert.True(t1.ToString().Equals("2^2"));
+            //d= (3+4)^0.5
+            var t2 = new Term(Expression.Add, new List<object>() {3, 4});
+            var t3 = new Term(Expression.Power, new List<object>() {t2, 0.5});
+            Assert.True(t3.ToString().Equals("(3+4)^0.5"));
+        }
+
+        [Test]
+        public void Test_Print5()
+        {
+            //x=-1+5/2
+            var t1 = new Term(Expression.Divide, new List<object>() {5, 2});
+            var t2 = new Term(Expression.Add, new List<object>() {-1, t1});
+            Assert.True(t1.ToString().Equals("5/2"));
+            Assert.True(t2.ToString().Equals("-1+5/2"));
+        }
+
+        [Test]
+        public void Test_Print6()
+        {
+            //x=(-1+5)/2
+            var t1 = new Term(Expression.Add, new List<object>() { -1, 5 });
+            var t2 = new Term(Expression.Divide, new List<object>() { t1, 2 });
+            Assert.True(t1.ToString().Equals("-1+5"));
+            Assert.True(t2.ToString().Equals("(-1+5)/2"));
+        }
+
+        [Test]
+        public void Test_Print7()
+        {
+            //2+-1*5
+            var t1 = new Term(Expression.Multiply, new List<object>() {-1, 5});
+            var t2 = new Term(Expression.Add, new List<object>() {2, t1});
+
+            Assert.True(t1.ToString().Equals("-1*5"));
+        }
+
+        [Test]
+        public void Test_Print8()
+        {
+            var x = new Var("x");
+            var y = new Var("y");
+
+            var t1 = new Term(Expression.Multiply, new List<object>() {4, x});
+            var t2 = new Term(Expression.Multiply, new List<object>() {-1, t1});
+
+
+            Assert.True(t2.ToString().Equals("a"));
+        }
+
+
+        [Test]
         public void Test_containVar()
         {
             var variable = new Var('x');

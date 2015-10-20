@@ -58,7 +58,7 @@ namespace CSharpLogic
             var glst = gTerm.Args as List<object>;
             Assert.NotNull(glst);
             Assert.True(glst.Count == 2);
-            Assert.True(term1.Traces.Count == 2);
+            Assert.True(term1.Traces.Count == 1);
         }
 
         [Test]
@@ -75,7 +75,50 @@ namespace CSharpLogic
             var glst = gTerm.Args as List<object>;
             Assert.NotNull(glst);
             Assert.True(glst.Count == 2);
-            Assert.True(term.Traces.Count == 2);
+            Assert.True(term.Traces.Count == 1);
         }
+
+        [Test]
+        public void Term_Algebra_Arith_4()
+        {
+            // //a^2+ 4^2 - 25; 
+            //a^2+25+-1*16
+            var a = new Var('a');
+            var term1 = new Term(Expression.Power, new List<object>() {a, 2});
+            var term2 = new Term(Expression.Power, new List<object>() {4, 2});
+            var term3 = new Term(Expression.Multiply, new List<object>() {-1, 25});
+            var term = new Term(Expression.Add, new List<object>() {term1, term2, term3});
+            object obj = term.Eval();
+            Assert.NotNull(obj);
+        }
+
+        [Test]
+        public void Term_Algebra_Arith_5()
+        {
+            var a = new Var('a');
+            var b = new Var('b');
+            var term1 = new Term(Expression.Power, new List<object>() { a, 2 });
+            var term2 = new Term(Expression.Power, new List<object>() { b, 2 });
+            var term = new Term(Expression.Add, new List<object>() { term1, term2});
+            object obj = term.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.Equals(term));
+        }
+
+        [Test]
+        public void Term_Algebra_Arith_6()
+        {
+            object A = new Var('a');
+            object B = new Var('b');
+            object C = new Var('c');
+            var term1 = new Term(Expression.Multiply, new List<object>() { -1, A });
+            var term2 = new Term(Expression.Divide, new List<object>() { term1, B });
+            var term3 = new Term(Expression.Multiply, new List<object>() { -1, C });
+            var term4 = new Term(Expression.Divide, new List<object>() { term3, B });
+            object slope = term2.Eval();
+            object intercept = term4.Eval();            
+        }
+    
+    
     }
 }

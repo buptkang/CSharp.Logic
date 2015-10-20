@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+
 namespace CSharpLogic
 {
     using System.Diagnostics;
@@ -25,18 +27,13 @@ namespace CSharpLogic
         public HashSet<object> CachedEntities { get; set; }
         private HashSet<KeyValuePair<object, object>> CachedObjects;
 
+        #region Evaluation
+
         public object Eval()
         {
-            //verification purpose
-            Equation outputEq;
-
-            bool? result = Eval(out outputEq, false);
-            if (result != null)
-            {
-                CachedEntities.Add(result);
-            }
-
-            return null;
+           //verification purpose
+           object outputEq;
+           return Eval(out outputEq);
         }
 
         public void UnEval()
@@ -48,110 +45,157 @@ namespace CSharpLogic
             ClearTrace();
         }
 
-        public bool? Eval(out Equation outputEq, bool withTransitive = true)
+        public bool? Eval(out object outputEq, bool withTransitive = true,
+                            bool lineCheck = false)
         {
-            #region Term Proprocessing
-            var lhsTerm = Lhs as Term;
-            if (lhsTerm != null)
+            bool? result = EvalEquation(out outputEq, withTransitive, lineCheck);
+
+            if (result != null)
             {
-                object lhs = lhsTerm.Eval();
-                if (!lhsTerm.Equals(lhs))
+                CachedEntities.Add(outputEq);
+                return result;
+            }
+            var eq1 = outputEq as Equation;
+            if (eq1 != null)
+            {
+                CachedEntities.Add(eq1);
+            }
+            var lst = outputEq as List<object>;
+            if (lst != null)
+            {
+                foreach (var eq in lst)
                 {
-                    TransformTermTrace(true);
+                    CachedEntities.Add(eq);
+                }
+            }
+            return null;
+        }
+
+        public bool? EvalEquation(out object outputEq, bool withEqRule = true,
+                        bool lineCheck = false)
+        {
+            bool? result = EquationLaws(this, withEqRule, out outputEq, lineCheck);
+
+            var dyObj = outputEq as DyLogicObject;
+            if (dyObj != null)
+            {
+                dyObj.ImportTrace(Traces);
+            }
+                        
+            if (result != null) return result;
+
+            var eqLst = outputEq as List<Equation>;
+            if (eqLst == null) return null;
+
+            var outputLst = new List<object>();
+            object gOutput;
+
+            foreach (var gEq in eqLst)
+            {
+                gEq.ClearTrace();
+                bool? internalResult = gEq.EquationLaws(gEq, withEqRule, out gOutput, lineCheck);
+                if (internalResult != null)
+                {
+                    return internalResult;
+                }
+                //transform rootEq trace to each output eq and
+                var gEq1 = gOutput as DyLogicObject;
+                if (gEq1 != null)
+                {
+                    var trace = new List<Tuple<object, object>>();
+
+                    Debug.Assert(gEq.Traces.Count == 1);
+                    Debug.Assert(this.Traces.Count == 1);
+
+                    var lst1 = this.Traces[0].Item2 as List<TraceStep>;
+                    var lst2 = gEq.Traces[0].Item2 as List<TraceStep>;
+
+                    var lst = new List<TraceStep>();
+                    if(lst1 != null) lst.AddRange(lst1);
+                    if(lst2 != null) lst.AddRange(lst2);
+
+                    var tuple = new Tuple<object, object>(this.Traces[0].Item1, lst);
+                    trace.Add(tuple);
+                    gEq1.ImportTrace(trace);
+                }
+                outputLst.Add(gOutput);
+            }
+            outputEq = outputLst;
+            return null;
+        }
+
+        private Equation EvalTermInEquation(Equation rootEq, bool isLhs)
+        {
+            Equation localEq = this;
+            object obj = isLhs ? Lhs : Rhs;
+
+            var term = obj as Term;
+            if (term == null) return localEq;
+            object evalResult = term.Eval();
+            if (evalResult.Equals(term)) return localEq;
+            var cloneEq = Clone();
+            if (isLhs)
+            {
+                cloneEq.Lhs = evalResult;
+            }
+            else
+            {
+                cloneEq.Rhs = evalResult;
+            }
+
+            Equation currentEq = FindCurrentEq(rootEq);
+
+            #region Trace Transformation from term to Equation
+
+            if (term.Traces.Count != 0)
+            {
+                localEq = currentEq;
+                foreach (var trace in term.Traces)
+                {
+                    var strategy = trace.Item1 as string;
+                    var lst = trace.Item2 as List<TraceStep>;
+                    foreach (var ts in lst)
+                    {
+                        var cloneEq2 = Generate(currentEq, ts.Source, ts.Target, isLhs);
+                        var eqTraceStep = new TraceStep(localEq, cloneEq2, ts.Rule, ts.AppliedRule);
+                        rootEq._innerLoop.Add(eqTraceStep);
+                        localEq = cloneEq2;
+                    }
+                    //GenerateATrace(strategy);
                 }
             }
 
-            var rhsTerm = Rhs as Term;
-            if (rhsTerm != null)
+            if (term._innerLoop.Count != 0)
             {
-                object rhs = rhsTerm.Eval();
-                if (!rhsTerm.Equals(rhs))
+                foreach (var ts in term._innerLoop)
                 {
-                    TransformTermTrace(false);
+                    var cloneEq1 = Generate(currentEq, ts.Source, ts.Target, isLhs);
+                    var eqTraceStep = new TraceStep(localEq, cloneEq1, ts.Rule, ts.AppliedRule);
+                    rootEq._innerLoop.Add(eqTraceStep);
+                    localEq = cloneEq1;
                 }
             }
             #endregion
 
-            return EvalEquation(out outputEq, withTransitive);
+            return cloneEq;
         }
 
-        public bool? EvalEquation(out Equation outputEq, bool withEqRule = true)
+        private bool? EquationLaws(Equation rootEq, bool withEqRule, out object outputEq,
+            bool lineCheck = false)
         {
-            return EquationLaws(this, withEqRule, out outputEq);
-        }
-
-        private Equation EvalLeftSide(Equation rootEq)
-        {
-            Equation localEq = this;
-            var lhsTerm = Lhs as Term;
-            if (lhsTerm != null)
-            {
-                object lhs = lhsTerm.Eval();
-                if (!lhsTerm.Equals(lhs))
-                {
-                    var cloneEq = Clone();
-                    cloneEq.Lhs = lhs;
-
-                    #region Trace Generation
-                    if (lhsTerm.Traces.Count != 0)
-                    {
-                        foreach (var ts in lhsTerm.Traces)
-                        {
-                            var cloneEq1 = Generate(localEq, ts.Source, ts.Target, true);
-                            var eqTraceStep = new TraceStep(localEq, cloneEq1, ts.Rule, ts.AppliedRule);
-                            rootEq.Traces.Add(eqTraceStep);
-                            localEq = cloneEq1;
-                        }
-                    }
-                    #endregion
-
-                    localEq = cloneEq;
-                }
-            }
-            return localEq;
-        }
-
-        private Equation EvalRightSide(Equation rootEq)
-        {
-            Equation localEq = this;
-            var rhsTerm = Rhs as Term;
-            if (rhsTerm != null)
-            {
-                object rhs = rhsTerm.Eval();
-                if (!rhsTerm.Equals(rhs))
-                {
-                    var cloneEq = Clone();
-                    cloneEq.Rhs = rhs;
-                    #region Trace Generation
-                    if (rhsTerm.Traces.Count != 0)
-                    {
-                        foreach (var ts in rhsTerm.Traces)
-                        {
-                            var cloneEq1 = Generate(localEq, ts.Source, ts.Target, false);
-                            var eqTraceStep = new TraceStep(localEq, cloneEq1, ts.Rule, ts.AppliedRule);
-                            rootEq.Traces.Add(eqTraceStep);
-                            localEq = cloneEq1;
-                        }
-                    }
-                    #endregion
-
-                    localEq = cloneEq;
-                }
-            }
-            return localEq;
-        }
-
-        private bool? EquationLaws(Equation rootEq, bool withEqRule, out Equation outputEq)
-        {
-            Equation currentEq;
+/*            Equation currentEq;
             if (Traces.Count == 0)
             {
                 currentEq = this;
             }
             else
             {
-                currentEq = Traces[Traces.Count - 1].Target as Equation;
-            }
+                var tuple = Traces[Traces.Count - 1];
+                var lst = tuple.Item2 as List<TraceStep>;
+                Debug.Assert(lst != null);
+                currentEq = lst[lst.Count - 1].Target as Equation;
+            }*/
+            Equation currentEq = FindCurrentEq(rootEq);
             outputEq = currentEq;
 
             Debug.Assert(currentEq != null);
@@ -159,27 +203,45 @@ namespace CSharpLogic
             do
             {
                 hasChange = false;
-                bool? satisfiable = Satisfy(currentEq);
-                if (satisfiable != null)
-                {
-                    outputEq = currentEq;
-                    return satisfiable.Value;
-                }
-                Equation localEq00 = currentEq.EvalLeftSide(rootEq);
+                Equation localEq00 = currentEq.EvalTermInEquation(rootEq, true);
                 if (!localEq00.Equals(currentEq))
                 {
                     hasChange = true;
                     currentEq = localEq00;
                 }
-                Equation localEq0 = currentEq.EvalRightSide(rootEq);
+                Equation localEq0 = currentEq.EvalTermInEquation(rootEq, false);
                 if (!localEq0.Equals(currentEq))
                 {
                     hasChange = true;
                     currentEq = localEq0;
                 }
 
-                var localEq1 = currentEq.ApplyTransitive(rootEq, withEqRule);
-                if (!localEq1.Equals(currentEq))
+                bool? satisfiable = Satisfy(currentEq);
+                if (satisfiable != null)
+                {
+                    if (rootEq._innerLoop.Count != 0)
+                    {
+                        rootEq.GenerateATrace(EquationsRule.EqStrategy);
+                    }
+                    outputEq = currentEq;
+                    return satisfiable.Value;
+                }
+
+                var localObj1 = currentEq.ApplyTransitive(rootEq, withEqRule, lineCheck);
+
+                var localEq1 = localObj1 as Equation;
+                var localEqLst = localObj1 as List<Equation>;
+                if (localEqLst != null)
+                {
+                    if (rootEq._innerLoop.Count != 0)
+                    {
+                        rootEq.GenerateATrace(EquationsRule.EqStrategy);
+                    }
+                    outputEq = localEqLst;
+                    return null;
+                }
+
+                if (localEq1 != null && !localEq1.Equals(currentEq))
                 {
                     hasChange = true;
                     currentEq = localEq1;
@@ -193,6 +255,11 @@ namespace CSharpLogic
                 }
 
             } while (hasChange);
+
+            if (rootEq._innerLoop.Count != 0)
+            {
+                rootEq.GenerateATrace(EquationsRule.EqStrategy);
+            }
 
             outputEq = currentEq;
             return null;
@@ -228,5 +295,7 @@ namespace CSharpLogic
                         }*/
             return null;
         }
+
+        #endregion
     }
 }

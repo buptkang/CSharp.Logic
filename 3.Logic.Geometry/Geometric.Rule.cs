@@ -16,20 +16,10 @@
 
 namespace CSharpLogic
 {
-    public static class ArithRule
+    using System;
+
+    public static class GeometricRule
     {
-        public static string CalcRule(object method, object left,
-            object right, object result)
-        {
-            return string.Format("Make the calculation: {1} {0} {2}",
-                method.ToString(), left.ToString(), right.ToString());
-        }
-
-        public static string CalcRule(object method)
-        {
-            return string.Format("Think about Calculation: {0}", method.ToString());
-        }
-
-        public static string ArithmeticStrategy = "Manipulate Arithmetic Expression using add, substraction, multiply rules.";
+        public static string GeometricStrategy = "Do the pattern matching between an algebraic equation and a shape.";
     }
 }

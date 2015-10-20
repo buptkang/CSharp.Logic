@@ -26,14 +26,17 @@ namespace CSharpLogic
                                   string rule, string appliedRule)
         {
             Term currentTerm;
-            if (Traces.Count == 0)
+            if (_innerLoop.Count == 0)
             {
                 currentTerm = this;
             }
             else
             {
-                currentTerm = Traces[Traces.Count - 1].Target as Term;
-                if (currentTerm == null) throw new Exception("Must be term here");
+                currentTerm = _innerLoop[_innerLoop.Count - 1].Target as Term;
+                if (currentTerm == null)
+                {
+                    return;
+                }
             }
             Term cloneTerm = currentTerm.Clone();
             List<object> lst;
@@ -45,7 +48,7 @@ namespace CSharpLogic
                 lst[index] = target;
                 object objj = cloneTerm.ReConstruct();
                 var ts = new TraceStep(currentTerm, objj, rule, appliedRule);
-                Traces.Add(ts);
+                _innerLoop.Add(ts);
             }
             else
             {
@@ -54,12 +57,12 @@ namespace CSharpLogic
                 {
                     object objj = targetTerm.ReConstruct();
                     var ts = new TraceStep(currentTerm, objj, rule, appliedRule);
-                    Traces.Add(ts);
+                    _innerLoop.Add(ts);
                 }
                 else
                 {
                     var ts = new TraceStep(currentTerm, target, rule, appliedRule);
-                    Traces.Add(ts);
+                    _innerLoop.Add(ts);
                 }
             }
         }

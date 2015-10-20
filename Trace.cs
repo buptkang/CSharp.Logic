@@ -26,12 +26,22 @@ namespace CSharpLogic
 
         public object AppliedRule { get; set; }
 
+        public bool WrongStep { get; set; }
+
         public TraceStep(object source, object target, object rule, object appliedRule)
         {
             Source = source;
             Target = target;
             Rule = rule;
             AppliedRule = appliedRule;
+            WrongStep = false;
+        }
+
+        public TraceStep(object source, object target)
+        {
+            Source = source;
+            Target = target;
+            WrongStep = true;
         }
 
         public TraceStep Clone()

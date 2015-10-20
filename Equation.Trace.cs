@@ -14,63 +14,47 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using NUnit.Framework;
+
 namespace CSharpLogic
 {
     using System;
 
     public partial class Equation
     {
-        /// <summary>
-        /// Transform Term trace -> Equation trace
-        /// </summary>
-        public void TransformTermTrace(bool isLhs)
+        public Equation FindCurrentEq(Equation rootEq)
         {
-            Term term;
-            if (isLhs)
-            {
-                term = Lhs as Term;
-            }
-            else
-            {
-                term = Rhs as Term;
-            }
             Equation currentEq;
-            if (Traces.Count == 0)
+            if (rootEq._innerLoop.Count != 0)
             {
-                currentEq = this;
-            }
-            else
-            {
-                currentEq = Traces[Traces.Count - 1].Target as Equation;
+                currentEq = rootEq._innerLoop[rootEq._innerLoop.Count - 1].Target as Equation;
                 if (currentEq == null) throw new Exception("Must be equation here");
             }
-
-            if (term == null) throw new Exception("Cannot be null");
-            if (term.Traces.Count != 0)
+            else
             {
-                Equation localEq = currentEq;
-                foreach (var ts in term.Traces)
+                if (rootEq.Traces.Count == 0)
                 {
-                    var cloneEq = Generate(localEq, ts.Source, ts.Target, isLhs);
-                    var eqTraceStep = new TraceStep(localEq, cloneEq, ts.Rule, ts.AppliedRule);
-                    Traces.Add(eqTraceStep);
-                    localEq = cloneEq;
+                    currentEq = rootEq;
+                }
+                else
+                {
+                    var lastTrace = rootEq.Traces[rootEq.Traces.Count - 1].Item2 as List<TraceStep>;
+                    Debug.Assert(lastTrace != null);
+                    currentEq = lastTrace[lastTrace.Count - 1].Target as Equation;
                 }
             }
+            return currentEq;
         }
 
         public Equation Generate(Equation currentEq, object source, object target, bool isLhs)
         {
-            if (currentEq.Traces.Count != 0)
-            {
-                currentEq = Traces[Traces.Count - 1].Target as Equation;
-                if (currentEq == null) throw new Exception("Must be equation here");
-            }
-
             Equation cloneEq = currentEq.Clone();
             if (isLhs)
             {
-                if (!source.Equals(currentEq.Lhs))
+                if (!source.Equals(cloneEq.Lhs))
                 {
                     //throw new Exception("Equation.Trace.cs 1: Must be equal.");
                 }
@@ -78,19 +62,13 @@ namespace CSharpLogic
             }
             else
             {
-                if (!source.Equals(currentEq.Rhs))
+                if (!source.Equals(cloneEq.Rhs))
                 {
-                    throw new Exception("Equation.Trace.cs 2: Must be equal.");
+                    //throw new Exception("Equation.Trace.cs 2: Must be equal.");
                 }
                 cloneEq.Rhs = target;
             }
             return cloneEq;
-        }
-
-        public void GenerateTrace(Equation currentEq, Equation cloneEq, string rule, string appliedRule)
-        {
-            var ts = new TraceStep(currentEq, cloneEq, rule, appliedRule);
-            Traces.Add(ts);
         }
     }
 }

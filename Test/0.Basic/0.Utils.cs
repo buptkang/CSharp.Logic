@@ -16,20 +16,21 @@
 
 namespace CSharpLogic
 {
-    public static class ArithRule
+    using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+
+    [TestFixture]
+    public class TestUtils
     {
-        public static string CalcRule(object method, object left,
-            object right, object result)
+        [Test]
+        public void TestApproximateEqual()
         {
-            return string.Format("Make the calculation: {1} {0} {2}",
-                method.ToString(), left.ToString(), right.ToString());
-        }
+            double a = 5.81;
+            double b = 5.8444;
 
-        public static string CalcRule(object method)
-        {
-            return string.Format("Think about Calculation: {0}", method.ToString());
+            bool result = LogicSharp.NumericApproximateEqual(a, b);
+            Assert.True(result);
         }
-
-        public static string ArithmeticStrategy = "Manipulate Arithmetic Expression using add, substraction, multiply rules.";
     }
 }
