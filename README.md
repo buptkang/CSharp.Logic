@@ -10,9 +10,11 @@ This library is an embedded logic reasoning core. It supports recursive substitu
 
 1. Consider math arithmetic problems, such as 1+2+3=?, 1-2*3=?, check out unit test to compute the result and intermediate steps to reach that result: [ArithTest.cs](https://github.com/buptkang/CSharp.Logic/tree/master/Test/0.Logic.Arithmetic).
 
-2. Consider math algebraic problems, such as simplifying 2x+3y-2x+2z=?, check out unit test code to compute the result and intermediate steps to reach that result: [AlgebraTest.cs](https://github.com/buptkang/CSharp.Logic/tree/master/Test/1.Logic.Algebra).
+2. Consider math algebraic expression problems, such as simplifying 2x+3y-2x+2z, check out unit test code to compute the result and intermediate steps to reach that result: [AlgebraTest.cs](https://github.com/buptkang/CSharp.Logic/tree/master/Test/1.Logic.Algebra).
 
- 
+3. Consider math algebra equation problems, such as simplifying 3y+2x-x+3y=y, check out unit test code to compute the result and intermediate steps to reach that result:
+[*.Equation.*.Test.cs](https://github.com/buptkang/CSharp.Logic/tree/master/Test/2.Logic.Equation)
+
 ## License
 
 Copyright (c) 2015 Bo Kang
