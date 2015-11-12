@@ -7,5 +7,8 @@ before_install:
 before_script:
   - nuget restore CSharpLogic.sln
 
+script:
+  - xbuild CSharpLogic.sln
+
 after_script:
-  - nunit-console bin/Release/Tests.dll
+  - nunit-console bin/Release/CSharpLogic.dll
