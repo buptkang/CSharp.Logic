@@ -1,4 +1,6 @@
 # CSharp.Logic
+
+[![](https://travis-ci.org/buptkang/CSharp.Logic.png)](https://travis-ci.org/buptkang/CSharp.Logic)
  
 This library is an embedded logic reasoning core. It supports recursive substitution based on the logic rules. Its logical form is a type of First Order Logic from [miniKanren](https://github.com/miniKanren/miniKanren), a Scheme library for relational programming. This library further includes a rule-production engine on arithmetic and algebra computation. It traces the computing paths which can be used to build a symbolic algebraic tutoring engine.
 
