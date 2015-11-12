@@ -1,14 +1,14 @@
 language: csharp
 solution: CSharpLogic.sln
 
+script:
+  - xbuild /p:Configuration=Debug CSharpLogic.sln
+
 before_install:
   - sudo apt-get install nunit-console
 
 before_script:
   - nuget restore CSharpLogic.sln
-
-script:
-  - xbuild CSharpLogic.sln
-
+  
 after_script:
   - nunit-console bin/Release/CSharpLogic.dll
