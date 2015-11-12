@@ -14,8 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-namespace CSharpLogic
+namespace CSharpLogicTest
 {
+    using CSharpLogic;
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
@@ -106,7 +107,6 @@ namespace CSharpLogic
             Assert.True(t2.ToString().Equals("(-1+5)/2"));
         }
 
-        [Test]
         public void Test_Print7()
         {
             //2+-1*5
@@ -116,7 +116,6 @@ namespace CSharpLogic
             Assert.True(t1.ToString().Equals("-1*5"));
         }
 
-        [Test]
         public void Test_Print8()
         {
             var x = new Var("x");

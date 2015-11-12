@@ -35,7 +35,7 @@ namespace CSharpLogic
             var equation = new Equation(lhs, x);
             bool result = equation.ContainsVar();
             Assert.True(result);
-            Assert.True(equation.ToString().Equals("(1+2)=x"));
+            Assert.True(equation.ToString().Equals("1+2=x"));
 
             equation.Eval();
             Assert.True(equation.CachedEntities.Count == 1);
@@ -54,7 +54,7 @@ namespace CSharpLogic
             var equation = new Equation(lhs, 3);
             bool result = equation.ContainsVar();
             Assert.True(result);
-            Assert.True(equation.ToString().Equals("(x+2)=3"));
+            Assert.True(equation.ToString().Equals("x+2=3"));
 
             equation.Eval();
 

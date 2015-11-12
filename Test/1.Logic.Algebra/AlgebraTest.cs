@@ -35,7 +35,7 @@ namespace CSharpLogic
             var gTerm = result as Term;
             Assert.NotNull(gTerm);
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("(x+3)"));
+            Assert.True(result.ToString().Equals("x+3"));
             Assert.True(a.Traces.Count == 1);
         }
 
@@ -47,7 +47,7 @@ namespace CSharpLogic
             var a = new Term(Expression.Multiply, new List<object>() { x, 3 });
             object result = a.EvalAlgebra();
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("(3*x)"));
+            Assert.True(result.ToString().Equals("3x"));
             Assert.True(a.Traces.Count == 1);
         }
 
@@ -59,7 +59,7 @@ namespace CSharpLogic
             var a = new Term(Expression.Multiply, new List<object>() { 3, x, 3 });
             object result = a.EvalAlgebra();
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("(9*x)"));
+            Assert.True(result.ToString().Equals("9x"));
             Assert.True(a.Traces.Count == 1);
         }
 
@@ -70,11 +70,11 @@ namespace CSharpLogic
             var a = new Var('a');
             var term = new Term(Expression.Add, new List<object>() { 1, a });
             var term1 = new Term(Expression.Add, new List<object>() { 1, term });
-            Assert.True(term1.ToString().Equals("(1+(1+a))"));
+            Assert.True(term1.ToString().Equals("1+1+a"));
 
             object result = term1.EvalAlgebra();
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("(a+2)"));
+            Assert.True(result.ToString().Equals("a+2"));
             Assert.True(term1.Traces.Count == 1);
 
             var lst = term1.Traces[0].Item2 as List<TraceStep>;
@@ -89,11 +89,11 @@ namespace CSharpLogic
             var a = new Var('a');
             var term = new Term(Expression.Add, new List<object>() { 1, a });
             var term1 = new Term(Expression.Multiply, new List<object>() { term, 2 });
-            Assert.True(term1.ToString().Equals("((1+a)*2)"));
+            Assert.True(term1.ToString().Equals("(1+a)2"));
 
             object result = term1.EvalAlgebra();
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("((2*a)+2)"));
+            Assert.True(result.ToString().Equals("2a+2"));
             Assert.True(term1.Traces.Count == 1);
 
             var lst = term1.Traces[0].Item2 as List<TraceStep>;
@@ -121,7 +121,7 @@ namespace CSharpLogic
             var term = new Term(Expression.Add, new List<object>() { x, 3 });
             object result = term.EvalAlgebra();
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("(x+3)"));
+            Assert.True(result.ToString().Equals("x+3"));
             Assert.True(term.Traces.Count == 0);
         }
 
@@ -133,7 +133,7 @@ namespace CSharpLogic
             var term = new Term(Expression.Add, new List<object>() { x, x });
             object result = term.EvalAlgebra();
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("(2*x)"));
+            Assert.True(result.ToString().Equals("2x"));
             Assert.True(term.Traces.Count == 1);
         }
 
@@ -146,7 +146,7 @@ namespace CSharpLogic
             var term1 = new Term(Expression.Add, new List<object>() { y, term });
             object result = term1.EvalAlgebra();
             Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("(3*y)"));
+            Assert.True(result.ToString().Equals("3y"));
             Assert.True(term1.Traces.Count == 1);
         }
 
@@ -170,8 +170,9 @@ namespace CSharpLogic
             //x+0=>x
             var x = new Var('x');
             var term = new Term(Expression.Add, new List<object>() { x, 0 });
-            Assert.True(term.ToString().Equals("(x+0)"));
+            Assert.True(term.ToString().Equals("x+0"));
             var result = term.Eval();
+            Assert.True(result.ToString().Equals("x"));
             Assert.NotNull(result);
             Assert.True(term.Traces.Count == 1);
         }
@@ -182,7 +183,7 @@ namespace CSharpLogic
             //0*x=>0
             var x = new Var('x');
             var term = new Term(Expression.Multiply, new List<object>() { 0, x });
-            Assert.True(term.ToString().Equals("(0*x)"));
+            //Assert.True(term.ToString().Equals("0x"));
             var result = term.Eval();
             Assert.NotNull(result);
             Assert.True(result.Equals(0));
@@ -201,7 +202,7 @@ namespace CSharpLogic
             var term = new Term(Expression.Multiply, new List<object>() { 3, 3, y });
             object obj = term.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(9*y)"));
+            Assert.True(obj.ToString().Equals("9y"));
             Assert.True(term.Traces.Count == 1);
         }
 
@@ -214,7 +215,7 @@ namespace CSharpLogic
             var term1 = new Term(Expression.Multiply, new List<object>() { term, y });
             object obj = term1.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(2*y)"));
+            Assert.True(obj.ToString().Equals("2y"));
             Assert.True(term1.Traces.Count == 1);
 
             //(1+1+1)*y -> (2+1)*y
@@ -222,7 +223,7 @@ namespace CSharpLogic
             term1 = new Term(Expression.Multiply, new List<object>() { term, y });
             obj = term1.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(3*y)"));
+            Assert.True(obj.ToString().Equals("3y"));
             Assert.True(term1.Traces.Count == 1);
         }
 
@@ -235,7 +236,7 @@ namespace CSharpLogic
             //Assert.True(term.ToString().Equals("(y+y)"));
             object obj = term.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(2*y)"));
+            Assert.True(obj.ToString().Equals("2y"));
             Assert.True(term.Traces.Count == 1);
         }
 
@@ -248,7 +249,7 @@ namespace CSharpLogic
             var term = new Term(Expression.Add, new List<object>() { y, term1 });
             object obj = term.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(3*y)"));
+            Assert.True(obj.ToString().Equals("3y"));
             Assert.True(term.Traces.Count == 1);
         }
 
@@ -262,7 +263,7 @@ namespace CSharpLogic
             var term = new Term(Expression.Add, new List<object>() {y, term1, term2});
             object obj = term.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(-1*y)"));
+            Assert.True(obj.ToString().Equals("-y"));
             Assert.True(term.Traces.Count == 1);
         }
 
@@ -277,7 +278,7 @@ namespace CSharpLogic
             var term = new Term(Expression.Add, new List<object>() {term1, y, x});
             object obj = term.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(x+((a+1)*y))"));
+            Assert.True(obj.ToString().Equals("x+(a+1)y"));
             Assert.True(term.Traces.Count == 1);
         }
 
@@ -290,7 +291,7 @@ namespace CSharpLogic
             var term1 = new Term(Expression.Multiply, new List<object> { 3, term });
             object obj = term1.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("((3*x)+3)"));
+            Assert.True(obj.ToString().Equals("3x+3"));
             Assert.True(term1.Traces.Count == 1);
         }
 
@@ -328,7 +329,7 @@ namespace CSharpLogic
             var term1 = new Term(Expression.Multiply, new List<object>() {3, term});
             object obj = term1.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(6*x)"));
+            Assert.True(obj.ToString().Equals("6x"));
             Assert.True(term1.Traces.Count == 1);
         }
 
@@ -341,7 +342,7 @@ namespace CSharpLogic
             var term1 = new Term(Expression.Add, new List<object>() { term, 1 });
             object obj = term1.Eval();
             Assert.NotNull(obj);
-            Assert.True(obj.ToString().Equals("(a+2)"));
+            Assert.True(obj.ToString().Equals("a+2"));
             Assert.True(term1.Traces.Count == 1);
         }
 

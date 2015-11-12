@@ -52,8 +52,7 @@ namespace CSharpLogic
          * x + 1 - 5　＝　2+1
          * x = 2+x+1          
          */
-
-        [Test]
+        //TODO
         public void Goal_Gen_1()
         {
             //x = 3

@@ -278,7 +278,7 @@ namespace CSharpLogic
                                 builder.Append("^");
                             }
                         }
-                        builder.Append(variable.ToString());
+                        builder.Append(variable);
                     }
                     #endregion
 
@@ -315,7 +315,14 @@ namespace CSharpLogic
                             double absNum = Math.Abs(dnum) - 1.0;
                             if (absNum > 0.0001)
                             {
-                                builder.Append(lst[i].ToString());
+                                builder.Append(lst[i]);
+                            }
+                            else
+                            {
+                                if (dnum < 0.0d)
+                                {
+                                    builder.Append("-");
+                                }
                             }
                         }
                         else if (Op.Method.Name.Equals("Divide"))

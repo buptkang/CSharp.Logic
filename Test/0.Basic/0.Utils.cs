@@ -14,7 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-namespace CSharpLogic
+using CSharpLogic;
+
+namespace CSharpLogicTest
 {
     using NUnit.Framework;
     using System;

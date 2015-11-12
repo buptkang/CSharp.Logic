@@ -46,7 +46,7 @@ namespace CSharpLogic
             outputEq = obj as Equation;
 			Assert.NotNull(outputEq);
             Assert.False(outputEq.Equals(equation));
-			Assert.True(outputEq.ToString().Equals("((2*x)+(3*y))=1"));
+			Assert.True(outputEq.ToString().Equals("2x+3y=1"));
         }
 
         [Test]
