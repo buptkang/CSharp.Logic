@@ -1,0 +1,11 @@
+language: csharp
+solution: CSharpLogic.sln
+
+before_install:
+  - sudo apt-get install nunit-console
+
+before_script:
+  - nuget restore CSharpLogic.sln
+
+after_script:
+  - nunit-console bin/Release/Tests.dll
