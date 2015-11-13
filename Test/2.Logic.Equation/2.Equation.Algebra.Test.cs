@@ -175,5 +175,12 @@ namespace CSharpLogic
             Assert.True(outputEq.Equals(eq));
 
         }
+
+        [Test]
+        public void Test_Algebra_7_TODO()
+        {
+            //TODO
+            //Equation reification when user draw two variables
+        }
     }
 }
