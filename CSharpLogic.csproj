@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CSharpLogic</RootNamespace>
     <AssemblyName>CSharpLogic</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -44,61 +46,69 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="0.Logic.Arithmetic\Arithmetic.Rule.cs" />
-    <Compile Include="1.Logic.Algebra\Algebra.cs" />
-    <Compile Include="1.Logic.Algebra\Algebra.Rule.cs" />
-    <Compile Include="0.Logic.Arithmetic\Arithmetic.cs" />
-    <Compile Include="2.Logic.Equation\Equations.cs" />
-    <Compile Include="2.Logic.Equation\Equations.Rule.cs" />
-    <Compile Include="3.Logic.Geometry\Geometric.Rule.cs" />
-    <Compile Include="3.Logic.Geometry\IShape.Eval.cs" />
-    <Compile Include="3.Logic.Geometry\IShape.cs" />
-    <Compile Include="3.Logic.Geometry\IShape.Trace.cs" />
-    <Compile Include="3.Logic.Geometry\ShapeTypes.cs" />
-    <Compile Include="Core.cs" />
-    <Compile Include="Equation.cs" />
-    <Compile Include="Equation.Eval.cs" />
-    <Compile Include="Equation.Reify.cs" />
-    <Compile Include="Equation.Trace.cs" />
-    <Compile Include="Goal.cs" />
-    <Compile Include="Goal.Eval.cs" />
+    <Compile Include="Scaffold\Scaffold.Arithmetic.cs" />
+    <Compile Include="Expression\Algebra.cs" />
+    <Compile Include="Scaffold\Scaffold.Algebra.cs" />
+    <Compile Include="Expression\Arithmetic.cs" />
+    <Compile Include="Equation\Equations.cs" />
+    <Compile Include="Scaffold\Scaffold.Equation.cs" />
+    <Compile Include="Scaffold\Scaffold.Pattern.cs" />
+    <Compile Include="Geometry\IShape.Eval.cs" />
+    <Compile Include="Geometry\IShape.cs" />
+    <Compile Include="Geometry\IShape.Trace.cs" />
+    <Compile Include="Geometry\ShapeTypes.cs" />
+    <Compile Include="Core\Core.cs" />
+    <Compile Include="Equation\Equation.cs" />
+    <Compile Include="Equation\Equation.Eval.cs" />
+    <Compile Include="Equation\Equation.Reify.cs" />
+    <Compile Include="Equation\Equation.Trace.cs" />
+    <Compile Include="Core\Goal.cs" />
+    <Compile Include="Core\Goal.Eval.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query.cs" />
-    <Compile Include="Reification.cs" />
-    <Compile Include="IEval.cs" />
-    <Compile Include="Substitution.Rule.cs" />
-    <Compile Include="Term.cs" />
-    <Compile Include="Term.Eval.cs" />
-    <Compile Include="Term.Reify.cs" />
-    <Compile Include="Term.Trace.cs" />
-    <Compile Include="Test\0.Basic\0.Utils.cs" />
-    <Compile Include="Test\1.Logic.Algebra\AlgebraArithIntegrateTest.cs" />
-    <Compile Include="Test\1.Logic.Algebra\AlgebraReificationTest.cs" />
-    <Compile Include="Test\1.Logic.Algebra\AlgebraTest.cs" />
-    <Compile Include="Test\0.Logic.Arithmetic\ArithTest.cs" />
-    <Compile Include="Test\2.Logic.Equation\1.Equation.Arith.Test.cs" />
-    <Compile Include="Test\2.Logic.Equation\2.Equation.Algebra.Test.cs" />
-    <Compile Include="Test\2.Logic.Equation\3.Equation.GoalGen.Test.cs" />
-    <Compile Include="Test\2.Logic.Equation\0.Equation.Satisfy.Test.cs" />
-    <Compile Include="Test\0.Basic\6.Core.cs" />
-    <Compile Include="Test\0.Basic\5.Goal.cs" />
-    <Compile Include="Test\0.Basic\3.Reification.cs" />
-    <Compile Include="Test\0.Basic\1.Term.cs" />
-    <Compile Include="Test\0.Basic\2.Unification.cs" />
-    <Compile Include="Test\0.Basic\4.DyLogicObject.cs" />
-    <Compile Include="Test\0.Basic\0.Variable.cs" />
-    <Compile Include="Trace.cs" />
-    <Compile Include="Unification.cs" />
-    <Compile Include="DyLogicObject.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="Variable.cs" />
+    <Compile Include="Core\Query.cs" />
+    <Compile Include="Core\Reification.cs" />
+    <Compile Include="Core\IEval.cs" />
+    <Compile Include="Scaffold\Scaffold.Substitution.cs" />
+    <Compile Include="Expression\Term.cs" />
+    <Compile Include="Expression\Term.Eval.cs" />
+    <Compile Include="Expression\Term.Reify.cs" />
+    <Compile Include="Expression\Term.Trace.cs" />
+    <Compile Include="Test\Core\Utils.Numerics.cs" />
+    <Compile Include="Test\Expression\AlgebraArithIntegrateTest.cs" />
+    <Compile Include="Test\Expression\AlgebraReificationTest.cs" />
+    <Compile Include="Test\Expression\AlgebraTest.cs" />
+    <Compile Include="Test\Expression\Arithmetic.cs" />
+    <Compile Include="Test\Equation\1.Equation.Arith.Test.cs" />
+    <Compile Include="Test\Equation\2.Equation.Algebra.Test.cs" />
+    <Compile Include="Test\Equation\3.Equation.GoalGen.Test.cs" />
+    <Compile Include="Test\Equation\Equation.cs" />
+    <Compile Include="Test\Core\Core.cs" />
+    <Compile Include="Test\Core\Goal.cs" />
+    <Compile Include="Test\Core\Reification.cs" />
+    <Compile Include="Test\Expression\Term.cs" />
+    <Compile Include="Test\Core\Unification.cs" />
+    <Compile Include="Test\Core\DyLogicObject.cs" />
+    <Compile Include="Test\Core\Variable.cs" />
+    <Compile Include="Scaffold\Trace.cs" />
+    <Compile Include="Core\Unification.cs" />
+    <Compile Include="Scaffold\DyLogicObject.cs" />
+    <Compile Include="Core\Utils.cs" />
+    <Compile Include="Core\Variable.cs" />
+    <Compile Include="Core\Utils.Numerics.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Compile Include="Test\2.Logic.Equation\4.Equation.GenShape.Test.cs" />
+    <Compile Include="Test\Equation\4.Equation.GenShape.Test.cs" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <ProjectReference Include="Math.IO\Math.IO\Math.IO\MathIO.csproj">
+      <Project>{13d8a154-5291-4e11-9dab-9e268cdd9fed}</Project>
+      <Name>MathIO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Test\Equation\TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

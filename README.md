@@ -8,6 +8,9 @@ This library is an embedded logic reasoning core. It supports recursive substitu
 
 ## Code Examples
 
+Arithmetic Expression (no variable) -> Algebraic Expression (variable) ->
+Fractional Expression  -> Equational Expression
+
 1. Consider math arithmetic problems, such as 1+2+3=?, 1-2*3=?, check out unit test to compute the result and intermediate steps to reach that result: [ArithTest.cs](https://github.com/buptkang/CSharp.Logic/tree/master/Test/0.Logic.Arithmetic).
 
 2. Consider math algebraic expression problems, such as simplifying 2x+3y-2x+2z, check out unit test code to compute the result and intermediate steps to reach that result: [AlgebraTest.cs](https://github.com/buptkang/CSharp.Logic/tree/master/Test/1.Logic.Algebra).
