@@ -102,12 +102,6 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Math.IO\Math.IO\Math.IO\MathIO.csproj">
-      <Project>{13d8a154-5291-4e11-9dab-9e268cdd9fed}</Project>
-      <Name>MathIO</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Test\Equation\TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

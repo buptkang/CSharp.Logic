@@ -14,10 +14,6 @@
  * limitations under the License.
  *******************************************************************************/
 
-using System.ComponentModel;
-using MathIO;
-using MathIO.Concept;
-
 namespace CSharpLogic
 {
     public static class ArithRule 
