@@ -53,10 +53,6 @@
     <Compile Include="Equation\Equations.cs" />
     <Compile Include="Scaffold\Scaffold.Equation.cs" />
     <Compile Include="Scaffold\Scaffold.Pattern.cs" />
-    <Compile Include="Geometry\IShape.Eval.cs" />
-    <Compile Include="Geometry\IShape.cs" />
-    <Compile Include="Geometry\IShape.Trace.cs" />
-    <Compile Include="Geometry\ShapeTypes.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Equation\Equation.cs" />
     <Compile Include="Equation\Equation.Eval.cs" />
@@ -65,7 +61,6 @@
     <Compile Include="Core\Goal.cs" />
     <Compile Include="Core\Goal.Eval.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Query.cs" />
     <Compile Include="Core\Reification.cs" />
     <Compile Include="Core\IEval.cs" />
     <Compile Include="Scaffold\Scaffold.Substitution.cs" />
