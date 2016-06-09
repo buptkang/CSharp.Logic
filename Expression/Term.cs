@@ -214,6 +214,11 @@ namespace CSharpLogic
             return false;
         }
 
+        public override int GetHashCode()
+        {
+            return Args.GetHashCode() ^ Op.GetHashCode();
+        }
+
         public override string ToString()
         {
             var builder = new StringBuilder();
@@ -436,8 +441,6 @@ namespace CSharpLogic
             if (dnum < 0.0) return true;
             return false;
         }
-
-
 
         #endregion
     }
