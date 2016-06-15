@@ -141,6 +141,12 @@ namespace CSharpLogic
                     hasChange = true;
                     localTerm0 = localTerm5;
                 }
+/*                var localTerm6 = localTerm5.ApplyFlattern(rootTerm);
+                if (!localTerm6.Equals(localTerm5))
+                {
+                    hasChange = true;
+                    localTerm0 = localTerm6;
+                }*/
                 localObj = localTerm5.Arithmetic(rootTerm);
                 if (!localObj.Equals(localTerm5))
                 {

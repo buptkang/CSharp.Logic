@@ -26,6 +26,7 @@ namespace CSharpLogic
         [Test]
         public void Term_Arith_1()
         {
+            //1+2+3
             //Addition
             var lst = new List<object>() {1, 2, 3};
             var term = new Term(Expression.Add, lst);
@@ -38,6 +39,7 @@ namespace CSharpLogic
         [Test]
         public void Term_Arith_2()
         {
+            //1+(-2)+(-3)
             //Substraction
             var lst = new List<object>() { 1, -2, -3 };
             var term = new Term(Expression.Add, lst);

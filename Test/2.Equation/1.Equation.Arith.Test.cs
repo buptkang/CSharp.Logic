@@ -112,12 +112,6 @@ namespace CSharpLogic
             Assert.True(equation.Traces.Count == 1);
         }
 
-        [Test]
-        public void Test_Arith_5()
-        {
-            //d=root(25)
-        }
-
         #endregion
 
     }

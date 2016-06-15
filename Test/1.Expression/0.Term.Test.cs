@@ -180,5 +180,65 @@ namespace CSharpLogicTest
             Assert.True(term.ReConstruct().Equals(1));
         }
 
+        [Test]
+        public void Is_Quadratic_Term_1()
+        {
+            //x^2.0
+            var variable = new Var("x");
+            var term = new Term(Expression.Power, new List<object>() {variable, 2.0});
+            Assert.True(term.IsQuadraticTerm());
+        }
+
+        [Test]
+        public void Is_Quadratic_Term_2()
+        {
+            //y^2
+            var variable = new Var("y");
+            var term = new Term(Expression.Power, new List<object>() { variable, 2 });
+            Assert.True(term.IsQuadraticTerm());
+        }
+
+        [Test]
+        public void Is_Quadratic_Term_3()
+        {
+            //(y-1)^2
+            var variable = new Var("y");
+            var term0 = new Term(Expression.Add, new List<object>() {variable, -1});
+            var term = new Term(Expression.Power, new List<object>(){term0, 2 });
+            Assert.True(term.IsQuadraticTerm());
+        }
+
+        [Test]
+        public void Is_Quadratic_Term_4()
+        {
+            //3*(y-1)^2
+            var variable = new Var("y");
+            var term0 = new Term(Expression.Add, new List<object>() { variable, -1 });
+            var term = new Term(Expression.Power, new List<object>() { term0, 2 });
+            var term1 = new Term(Expression.Multiply, new List<object>() {3, term});
+            Assert.True(term1.QuadraticTerm());
+        }
+
+        [Test]
+        public void Test_Flattern_1()
+        {
+            /*
+             * x+(2y+3z)
+             */
+            var x = new Var('x');
+            var y = new Var('y');
+            var z = new Var('z');
+            var term2 = new Term(Expression.Multiply, new List<object>() { 2, y });
+            var term3 = new Term(Expression.Multiply, new List<object>() { 3, z });
+            var expr1 = new Term(Expression.Add, new List<object>() { term2, term3 });
+            var expr = new Term(Expression.Add, new List<object>() { x, expr1 });
+
+            Term obj = expr.FlatTerm();
+            Assert.NotNull(obj);
+            var lst = obj.Args as List<object>;
+            Assert.NotNull(lst);
+            Assert.True(lst.Count == 3);
+        }
+
     }
 }

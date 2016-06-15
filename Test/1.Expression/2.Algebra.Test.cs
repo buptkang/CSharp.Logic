@@ -40,6 +40,34 @@ namespace CSharpLogic
         }
 
         [Test]
+        public void Test_Commutative_1_NonLinear_1()
+        {
+            // 3+x^2 -> x^2+3
+            var x = new Var('x');
+            var x_square = new Term(Expression.Power, new List<object>() {x, 2});
+            var term = new Term(Expression.Add, new List<object>() {3, x_square});
+            object result = term.EvalAlgebra();
+            var gTerm = result as Term;
+            Assert.NotNull(gTerm);
+            Assert.NotNull(result);
+            Assert.True(result.ToString().Equals("x^2+3"));
+        }
+
+        [Test]
+        public void Test_Commutative_1_NonLinear_2()
+        {
+            // x+x^2 -> x^2+x
+            var x = new Var('x');
+            var x_square = new Term(Expression.Power, new List<object>() { x, 2 });
+            var term = new Term(Expression.Add, new List<object>() { x, x_square });
+            object result = term.EvalAlgebra();
+            var gTerm = result as Term;
+            Assert.NotNull(gTerm);
+            Assert.NotNull(result);
+            Assert.True(result.ToString().Equals("x^2+x"));
+        }
+
+        [Test]
         public void Test_Commutative_2()
         {
             //x*3 -> 3*x
@@ -52,6 +80,17 @@ namespace CSharpLogic
         }
 
         [Test]
+        public void Test_Commutative_2_NonLinear()
+        {
+            //x^2*3 -> 3*x^2
+            var x = new Var('x');
+            var x_square = new Term(Expression.Power, new List<object>() { x, 2 });
+            var a = new Term(Expression.Multiply, new List<object>() { x_square, 3 });
+            object result = a.EvalAlgebra();
+            Assert.True(result.ToString().Equals("3(x^2)"));
+        }
+
+        [Test]
         public void Test_Commutative_3()
         {
             //3*x*3 -> 9*x
@@ -60,6 +99,19 @@ namespace CSharpLogic
             object result = a.EvalAlgebra();
             Assert.NotNull(result);
             Assert.True(result.ToString().Equals("9x"));
+            Assert.True(a.Traces.Count == 1);
+        }
+
+        [Test]
+        public void Test_Commutative_3_NonLinear()
+        {
+            //3*x^2*3 -> 9*x
+            var x = new Var('x');
+            var x_square = new Term(Expression.Power, new List<object>() { x, 2 });
+            var a = new Term(Expression.Multiply, new List<object>() { 3, x_square, 3 });
+            object result = a.EvalAlgebra();
+            Assert.NotNull(result);
+            Assert.True(result.ToString().Equals("9(x^2)"));
             Assert.True(a.Traces.Count == 1);
         }
 
@@ -108,26 +160,6 @@ namespace CSharpLogic
         [Test]
         public void Test_Identity_1()
         {
-            //x->1*x
-            var x = new Var('x');
-            //TODO            
-        }
-
-        [Test]
-        public void Test_Identity_2()
-        {
-            //x+3->1*x+3
-            var x = new Var('x');
-            var term = new Term(Expression.Add, new List<object>() { x, 3 });
-            object result = term.EvalAlgebra();
-            Assert.NotNull(result);
-            Assert.True(result.ToString().Equals("x+3"));
-            Assert.True(term.Traces.Count == 0);
-        }
-
-        [Test]
-        public void Test_Identity_3()
-        {
             //x+x->(1+1)x->2x
             var x = new Var('x');
             var term = new Term(Expression.Add, new List<object>() { x, x });
@@ -138,7 +170,7 @@ namespace CSharpLogic
         }
 
         [Test]
-        public void Test_Identity_4()
+        public void Test_Identity_2()
         {
             //y+2*y ->1*y+2*y
             var y = new Var('y');
@@ -148,16 +180,6 @@ namespace CSharpLogic
             Assert.NotNull(result);
             Assert.True(result.ToString().Equals("3y"));
             Assert.True(term1.Traces.Count == 1);
-        }
-
-        [Test]
-        public void Test_Identity_5()
-        {
-            //x*y ->1*x*y
-            var x = new Var('x');
-            var y = new Var('y');
-            var xy = new Var("xy");
-            //TODO           
         }
 
         #endregion
@@ -313,7 +335,84 @@ namespace CSharpLogic
         [Test]
         public void Test_Distributive_7()
         {
-            //x*(a+1)         -> xa + x 
+            //quadratic:
+            //3x^2+x^2 -> (3+1)x^2 -> 4x^2
+            var x      = new Var('x');
+            var xTerm = new Term(Expression.Power, new List<object>() {x,2});
+            var t1 = new Term(Expression.Multiply, new List<object>() {3, xTerm});            
+            Assert.True(t1.QuadraticTerm());
+
+            var x2 = new Var('x');
+            var t2 = new Term(Expression.Power, new List<object>() {x2, 2});
+            Assert.True(t2.QuadraticTerm());
+
+            var t3 = new Term(Expression.Add, new List<object>() {t1, t2});
+            Assert.True(t3.QuadraticTerm());
+
+            object obj = t3.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("4(x^2)"));
+        }
+
+        [Test]
+        public void Test_Distributive_8()
+        {
+            //1*y^2+2*y^2     -> (1+2)*y^2
+            var y = new Var('y');
+            var yTerm = new Term(Expression.Power, new List<object>() { y, 2 });
+            var t1 = new Term(Expression.Multiply, new List<object>() { 1, yTerm });
+            Assert.True(t1.QuadraticTerm());
+
+            var y2 = new Var('y');
+            var yTerm2 = new Term(Expression.Power, new List<object>() { y2, 2 });
+            var t2 = new Term(Expression.Multiply, new List<object>() { 2, yTerm2 });
+            Assert.True(t2.QuadraticTerm());
+
+            var t3 = new Term(Expression.Add, new List<object>() { t1, t2 });
+            Assert.True(t3.QuadraticTerm());
+
+            object obj = t3.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("3(y^2)"));
+        }
+
+        [Test]
+        public void Test_Distributive_9()
+        {
+            //x^2+x^2+x^2     -> (1+1+1)*x^2
+            var x = new Var('x');
+            var t1 = new Term(Expression.Power, new List<object>() { x, 2 });
+
+            var x2 = new Var('x');
+            var t2 = new Term(Expression.Power, new List<object>() { x2, 2 });
+
+            var x3 = new Var('x');
+            var t3 = new Term(Expression.Power, new List<object>() { x3, 2});
+
+            var t4 = new Term(Expression.Add, new List<object>() { t1, t2, t3});
+
+            object obj = t4.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("3(x^2)"));
+        }
+
+        [Test]
+        public void Test_Distributive_10()
+        {
+            //2*x^2+x^2+y     -> (2+1)x^2+y
+            var x = new Var('x');
+            var xTerm = new Term(Expression.Power, new List<object>() { x, 2 });
+            var t1 = new Term(Expression.Multiply, new List<object>() {2, xTerm});
+
+            var x2 = new Var('x');
+            var t2 = new Term(Expression.Power, new List<object>() { x2, 2 });
+
+            var t3 = new Var('y');
+
+            var t4 = new Term(Expression.Add, new List<object>() { t1, t2, t3 });
+            object obj = t4.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("3(x^2)+y"));
         }
 
         #endregion
@@ -397,6 +496,83 @@ namespace CSharpLogic
             Assert.True(obj.Equals(variable));
         }
 
+        [Test]
+        public void Test_Line_Match_0()
+        {
+            //3y+2x-9
+            var y = new Var('y');
+            var term1 = new Term(Expression.Multiply, new List<object>() { 3, y });
+            var x = new Var('x');
+            var term2 = new Term(Expression.Multiply, new List<object>() { 2, x });           
+            var term3 = new Term(Expression.Add, new List<object>() { term1, term2,-9 });
+
+            var obj = term3.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("2x+3y-9"));
+        }
+
+        [Test]
+        public void Test_Line_Match_1()
+        {
+            //3y-(2x-9)
+            var y = new Var('y');
+            var term1 = new Term(Expression.Multiply, new List<object>() {3, y});
+            var x = new Var('x');
+            var term2 = new Term(Expression.Multiply, new List<object>() {2, x});
+            var term3 = new Term(Expression.Add, new List<object>() {term2, -9});
+            var term4 = new Term(Expression.Multiply, new List<object>() {-1, term3});
+            var term5 = new Term(Expression.Add, new List<object>() {term1, term4});
+
+            object obj = term4.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("-2x+9"));
+
+            obj = term5.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("-2x+3y+9"));
+        }
+
+        #endregion
+
+        #region reification
+
+        [Test]
+        public void Term_Algebra_Reify_1()
+        {
+            /*
+             *  //y+y=> 
+             *  //y = 2
+             */
+            var y = new Var('y');
+            var term = new Term(Expression.Add, new List<object>() { y, y });
+            //Assert.True(term.ToString().Equals("(y+y)"));
+            var eqGoal = new EqGoal(y, 2);
+            var term1 = term.Reify(eqGoal) as Term;
+            Assert.NotNull(term1);
+            object obj = term1.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.Equals(4));
+            Assert.True(term1.Traces.Count == 1);
+        }
+
+        [Test]
+        public void Term_Algebra_Reify_2()
+        {
+            /*
+             *  //a*b=> 
+             *  //a=1
+             */
+            var y = new Var('y');
+            var a = new Var('a');
+            var b = new Var('b');
+            var term = new Term(Expression.Multiply, new List<object>() { a, b });
+            //Assert.True(term.ToString().Equals("(y+y)"));
+            var eqGoal = new EqGoal(a, 1);
+            var term1 = term.Reify(eqGoal) as Term;
+            Assert.NotNull(term1);
+            var obj = term1.Eval() as Var;
+            Assert.NotNull(obj);
+        }
 
         #endregion
     }

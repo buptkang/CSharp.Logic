@@ -45,11 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expression\Term.Extension.cs" />
     <Compile Include="Scaffold\Scaffold.Arithmetic.cs" />
     <Compile Include="Expression\Algebra.cs" />
     <Compile Include="Scaffold\Scaffold.Algebra.cs" />
     <Compile Include="Expression\Arithmetic.cs" />
-    <Compile Include="Equation\Equations.cs" />
+    <Compile Include="Equation\Equation.Extension.cs" />
     <Compile Include="Scaffold\Scaffold.Equation.cs" />
     <Compile Include="Scaffold\Scaffold.Pattern.cs" />
     <Compile Include="Core\Core.cs" />
@@ -67,22 +68,20 @@
     <Compile Include="Expression\Term.Eval.cs" />
     <Compile Include="Expression\Term.Reify.cs" />
     <Compile Include="Expression\Term.Trace.cs" />
-    <Compile Include="Test\Core\Utils.Numerics.cs" />
-    <Compile Include="Test\Expression\AlgebraArithIntegrateTest.cs" />
-    <Compile Include="Test\Expression\AlgebraReificationTest.cs" />
-    <Compile Include="Test\Expression\AlgebraTest.cs" />
-    <Compile Include="Test\Expression\Arithmetic.cs" />
-    <Compile Include="Test\Equation\1.Equation.Arith.Test.cs" />
-    <Compile Include="Test\Equation\2.Equation.Algebra.Test.cs" />
-    <Compile Include="Test\Equation\3.Equation.GoalGen.Test.cs" />
-    <Compile Include="Test\Equation\Equation.cs" />
-    <Compile Include="Test\Core\Core.cs" />
-    <Compile Include="Test\Core\Goal.cs" />
-    <Compile Include="Test\Core\Reification.cs" />
-    <Compile Include="Test\Expression\Term.cs" />
-    <Compile Include="Test\Core\Unification.cs" />
-    <Compile Include="Test\Core\DyLogicObject.cs" />
-    <Compile Include="Test\Core\Variable.cs" />
+    <Compile Include="Test\0.Core\Utils.Numerics.cs" />
+    <Compile Include="Test\1.Expression\3.Integrate.Test.cs" />
+    <Compile Include="Test\1.Expression\2.Algebra.Test.cs" />
+    <Compile Include="Test\1.Expression\1.Arithmetic.Test.cs" />
+    <Compile Include="Test\2.Equation\1.Equation.Arith.Test.cs" />
+    <Compile Include="Test\2.Equation\2.Equation.Algebra.Test.cs" />
+    <Compile Include="Test\2.Equation\0.Equation.Basic.Test.cs" />
+    <Compile Include="Test\0.Core\Core.cs" />
+    <Compile Include="Test\0.Core\Goal.cs" />
+    <Compile Include="Test\0.Core\Reification.cs" />
+    <Compile Include="Test\1.Expression\0.Term.Test.cs" />
+    <Compile Include="Test\0.Core\Unification.cs" />
+    <Compile Include="Test\0.Core\DyLogicObject.cs" />
+    <Compile Include="Test\0.Core\Variable.cs" />
     <Compile Include="Scaffold\Trace.cs" />
     <Compile Include="Core\Unification.cs" />
     <Compile Include="Scaffold\DyLogicObject.cs" />
@@ -91,13 +90,8 @@
     <Compile Include="Core\Utils.Numerics.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Test\Equation\4.Equation.GenShape.Test.cs" />
     <None Include="packages.config" />
     <None Include="README.md" />
-    <None Include="TODO.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Test\Equation\TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

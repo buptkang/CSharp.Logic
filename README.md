@@ -6,6 +6,13 @@
 This library is an embedded logic reasoning core. It supports recursive substitution based on the logic rules. Its logical form is a type of First Order Logic from <a href="https://github.com/miniKanren/miniKanren">miniKanren</a>, a scheme library for relational programming. This library further includes a rule-production engine on arithmetic and algebra computation. It traces the computing paths which can be used to build a symbolic algebraic tutoring engine.
 </p>
 
+## Recursion Loop
+
+Loop 1: Arithmetic
+Loop 2: Fraction
+Loop 3: Algebra Expression (Linear and Quadratic)
+Loop 4: Algebraic Equation
+
 ## Code Examples
 
 Arithmetic Expression (no variable) -> Algebraic Expression (variable) ->

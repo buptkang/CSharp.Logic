@@ -26,13 +26,13 @@ namespace CSharpLogic
         public HashSet<object> CachedEntities { get; set; }
         private HashSet<KeyValuePair<object, object>> CachedObjects;
 
-        #region Evaluation
+        #region Evaluation Public API
 
         public object Eval()
         {
-           //verification purpose
-           object outputEq;
-           return Eval(out outputEq);
+            //verification purpose
+            object outputEq;
+            return Eval(out outputEq);
         }
 
         public void UnEval()
@@ -44,7 +44,8 @@ namespace CSharpLogic
             ClearTrace();
         }
 
-        public bool? Eval(out object outputEq, bool withTransitive = true,
+        public bool? Eval(out object outputEq, 
+                            bool withTransitive = true,
                             bool lineCheck = false)
         {
             bool? result = EvalEquation(out outputEq, withTransitive, lineCheck);
@@ -80,7 +81,7 @@ namespace CSharpLogic
             {
                 dyObj.ImportTrace(Traces);
             }
-                        
+
             if (result != null) return result;
 
             var eqLst = outputEq as List<Equation>;
@@ -110,8 +111,8 @@ namespace CSharpLogic
                     var lst2 = gEq.Traces[0].Item2 as List<TraceStep>;
 
                     var lst = new List<TraceStep>();
-                    if(lst1 != null) lst.AddRange(lst1);
-                    if(lst2 != null) lst.AddRange(lst2);
+                    if (lst1 != null) lst.AddRange(lst1);
+                    if (lst2 != null) lst.AddRange(lst2);
 
                     var tuple = new Tuple<object, object>(this.Traces[0].Item1, lst);
                     trace.Add(tuple);
@@ -122,6 +123,12 @@ namespace CSharpLogic
             outputEq = outputLst;
             return null;
         }
+
+
+
+        #endregion
+
+        #region Evaluation Internals
 
         private Equation EvalTermInEquation(Equation rootEq, bool isLhs)
         {

@@ -117,7 +117,7 @@ namespace CSharpLogic
                     if (term != null && term.ContainsVar()) return true;
                 }
 
-                //e.g 1+(x+1) => (x+1)+1 
+                //e.g (1+1)+(x+1)=>(x+1)+(1+1)
                 var term1 = obj1 as Term;
                 if (term1 != null && !term1.ContainsVar())
                 {
@@ -128,8 +128,13 @@ namespace CSharpLogic
                     if (term != null && term.ContainsVar()) return true;
                 }
 
+                var variable11 = obj1 as Var;
+                var term2 = obj2 as Term;
+
+                if (variable11 != null && term2.QuadraticTerm()) return true;
+
                 //(2*y)+(2*x) -> (2*x)+(2*y)
-                var term2= obj2 as Term;
+                // x + x^2    -> x^2 + x
                 if (term1 != null && term2 != null)
                 {
                     var term1Lst = term1.Args as List<object>;
@@ -146,6 +151,10 @@ namespace CSharpLogic
                         bool condition2 = term2Var.ToString().Equals("X") ||
                                           term2Var.ToString().Equals("x");
                         if (condition1 && condition2) return true;
+                    }
+                    if (!term1.QuadraticTerm() && term2.QuadraticTerm())
+                    {
+                        return true;
                     }
                 }
             }
@@ -177,7 +186,7 @@ namespace CSharpLogic
         #region Identity Law
 
         /// <summary>
-        /// true positive: y*1= y, y/1=y
+        /// true positive: y*1 -> y, y/1 -> y
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="rootTerm"></param>
@@ -385,6 +394,10 @@ namespace CSharpLogic
             //y+y+y           -> (1+1+1)*y
             //a*y+y+x           -> (a+1)*y+x
 
+            //1*y^2+2*y^2     -> (1+2)*y^2
+            //x^2+x^2+x^2     -> (1+1+1)*x^2
+            //2*x^2+x^2+y     -> (2+1)x^2+y
+
             //3*(x+1)         -> 3x+3
             //a*(x+1)         -> ax+a
             //x*(a+1)         -> xa + x 
@@ -431,6 +444,11 @@ namespace CSharpLogic
                             AlgebraRule.AlgebraRuleType.Distributive,
                             list[i], list[i+1]);
 
+                        if (cloneLst.Count == 1)
+                        {
+                            cloneTerm = cloneLst[0] as Term;
+                        }
+
                         rootTerm.GenerateTrace(localTerm, cloneTerm, kc, rule, appliedRule);
                         localTerm = cloneTerm;
                         madeChanges = true;
@@ -450,16 +468,67 @@ namespace CSharpLogic
                 var term2 = obj2 as Term;
                 if (term1 == null || term2 == null) return false;
 
+                var lst1 = term1.Args as List<object>;
+                var lst2 = term2.Args as List<object>;
+                Debug.Assert(lst1 != null);
+                Debug.Assert(lst2 != null);
+
+                //Quadratic
+                if (term1.QuadraticTerm() && term2.QuadraticTerm())
+                {
+                    if (lst1.Count != 2 || lst2.Count != 2) return false;
+                    var quadratic1 = lst1[1] as Term;
+                    var quadratic2 = lst2[1] as Term;
+
+                    bool cond1 = term1.IsQuadraticTerm();
+                    bool cond2 = term2.IsQuadraticTerm();
+
+                    bool quadrCond1 = cond1 && cond2;
+                    bool quadrCond2 = cond1 && !cond2 && (quadratic2 != null);
+                    bool quadrCond3 = !cond1 && (quadratic1 != null) && cond2;
+                    bool quadrCond4 = !cond1 && (quadratic1 != null) && !cond2 && (quadratic2 != null);
+
+                    if (quadrCond1)
+                    {
+                        if (!term1.MatchQuadraticTerm(term2)) return false;
+                        var newList1 = new List<object>() { 1, 1 };
+                        var gTerm1 = new Term(Expression.Add, newList1);
+                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm1, term1 });
+                        return true;
+                    }
+                    if (quadrCond2)
+                    {
+                        if (!term1.MatchQuadraticTerm(quadratic2)) return false;
+                        var newList2 = new List<object>() { 1, lst2[0] };
+                        var gTerm2 = new Term(Expression.Add, newList2);
+                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm2, term1 });
+                        return true;
+                    }
+                    if (quadrCond3)
+                    {
+                        if (!quadratic1.MatchQuadraticTerm(term2)) return false;
+                        var newList3 = new List<object>() {lst1[0], 1};
+                        var gTerm3 = new Term(Expression.Add, newList3);
+                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm3, term2 });
+                        return true;
+                    }
+                    if (quadrCond4)
+                    {
+                        if (!quadratic1.MatchQuadraticTerm(quadratic2)) return false;
+                        var newList4 = new List<object>() {lst1[0], lst2[0]};
+                        var gTerm4 = new Term(Expression.Add, newList4);
+                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm4, quadratic2 });
+                        return true;
+                    }
+                }
+
+                //Linear
                 if (term1.Op.Method.Name.Equals("Power") ||
                     term2.Op.Method.Name.Equals("Power"))
                 {
                     return false;
                 }
 
-                var lst1 = term1.Args as List<object>;
-                var lst2 = term2.Args as List<object>;
-                Debug.Assert(lst1 != null);
-                Debug.Assert(lst2 != null);
                 if (lst1.Count != 2 || lst2.Count != 2) return false;
                 if (!lst1[1].Equals(lst2[1])) return false;
 
@@ -546,6 +615,44 @@ namespace CSharpLogic
             {
                 var term1 = obj1 as Term;
                 var term2 = obj2 as Term;
+
+                if (term1 != null && term2 != null)
+                {
+/*                    if (term1.Op.Method.Name.Equals("Add") && term2.Op.Method.Name.Equals("Multiply"))
+                    {
+                        var lst = term1.Args as List<object>;
+                        object obj = lst[lst.Count-1];
+                        if (LogicSharp.IsNumeric(obj) || NotSpecialVariables(obj))
+                        {
+                            var newLst = new List<object>();
+                            for (var i = 0; i < lst.Count - 1; i++)
+                            {
+                                newLst.Add(lst[i]);
+                            }
+                            output1 = newLst.Count == 1 ? newLst[0] : new Term(Expression.Add, newLst);
+                            output2 = new Term(Expression.Add, new List<object>() { obj, obj2 });
+                            return true;
+                        }
+                    }*/
+                    if (term1.Op.Method.Name.Equals("Multiply") && term2.Op.Method.Name.Equals("Add"))
+                    {
+                        var lst = term2.Args as List<object>;
+                        object obj = lst[lst.Count - 1];
+                        if (LogicSharp.IsNumeric(obj) || NotSpecialVariables(obj))
+                        {
+                            var newLst = new List<object>();
+                            for (var i = 0; i < lst.Count - 1; i++)
+                            {
+                                newLst.Add(lst[i]);
+                            }
+                            newLst.Insert(0,obj1);
+                            output1 = new Term(Expression.Add, newLst);
+                            output2 = obj;
+                            return true;
+                        }
+                    }
+                }
+
                 if (term1 != null && term2 == null)
                 {
                     if (!term1.Op.Method.Name.Equals("Add")) return false;
