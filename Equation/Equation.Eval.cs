@@ -209,6 +209,7 @@ namespace CSharpLogic
             do
             {
                 hasChange = false;
+
                 Equation localEq00 = currentEq.EvalTermInEquation(rootEq, true);
                 if (!localEq00.Equals(currentEq))
                 {
@@ -231,6 +232,13 @@ namespace CSharpLogic
                     }
                     outputEq = currentEq;
                     return satisfiable.Value;
+                }
+
+                var localEq000 = currentEq.ApplyTransitive2(rootEq, withEqRule, lineCheck);
+                if (!localEq000.Equals(currentEq))
+                {
+                    hasChange = true;
+                    currentEq = localEq000 as Equation;
                 }
 
                 var localObj1 = currentEq.ApplyTransitive(rootEq, withEqRule, lineCheck);

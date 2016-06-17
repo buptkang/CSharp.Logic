@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Data.SqlClient;
+
 namespace CSharpLogic
 {
     using System;
@@ -466,76 +468,85 @@ namespace CSharpLogic
             {
                 var term1 = obj1 as Term;
                 var term2 = obj2 as Term;
-                if (term1 == null || term2 == null) return false;
 
-                var lst1 = term1.Args as List<object>;
-                var lst2 = term2.Args as List<object>;
-                Debug.Assert(lst1 != null);
-                Debug.Assert(lst2 != null);
-
-                //Quadratic
-                if (term1.QuadraticTerm() && term2.QuadraticTerm())
+                if (term1 != null && term2 != null)
                 {
-                    if (lst1.Count != 2 || lst2.Count != 2) return false;
-                    var quadratic1 = lst1[1] as Term;
-                    var quadratic2 = lst2[1] as Term;
+                    var lst1 = term1.Args as List<object>;
+                    var lst2 = term2.Args as List<object>;
+                    Debug.Assert(lst1 != null);
+                    Debug.Assert(lst2 != null);
 
-                    bool cond1 = term1.IsQuadraticTerm();
-                    bool cond2 = term2.IsQuadraticTerm();
+                    #region Quadratic Term
 
-                    bool quadrCond1 = cond1 && cond2;
-                    bool quadrCond2 = cond1 && !cond2 && (quadratic2 != null);
-                    bool quadrCond3 = !cond1 && (quadratic1 != null) && cond2;
-                    bool quadrCond4 = !cond1 && (quadratic1 != null) && !cond2 && (quadratic2 != null);
-
-                    if (quadrCond1)
+                    if (term1.QuadraticTerm() && term2.QuadraticTerm())
                     {
-                        if (!term1.MatchQuadraticTerm(term2)) return false;
-                        var newList1 = new List<object>() { 1, 1 };
-                        var gTerm1 = new Term(Expression.Add, newList1);
-                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm1, term1 });
-                        return true;
-                    }
-                    if (quadrCond2)
-                    {
-                        if (!term1.MatchQuadraticTerm(quadratic2)) return false;
-                        var newList2 = new List<object>() { 1, lst2[0] };
-                        var gTerm2 = new Term(Expression.Add, newList2);
-                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm2, term1 });
-                        return true;
-                    }
-                    if (quadrCond3)
-                    {
-                        if (!quadratic1.MatchQuadraticTerm(term2)) return false;
-                        var newList3 = new List<object>() {lst1[0], 1};
-                        var gTerm3 = new Term(Expression.Add, newList3);
-                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm3, term2 });
-                        return true;
-                    }
-                    if (quadrCond4)
-                    {
-                        if (!quadratic1.MatchQuadraticTerm(quadratic2)) return false;
-                        var newList4 = new List<object>() {lst1[0], lst2[0]};
-                        var gTerm4 = new Term(Expression.Add, newList4);
-                        outputObj = new Term(Expression.Multiply, new List<object>() { gTerm4, quadratic2 });
-                        return true;
-                    }
-                }
+                        if (lst1.Count != 2 || lst2.Count != 2) return false;
+                        var quadratic1 = lst1[1] as Term;
+                        var quadratic2 = lst2[1] as Term;
 
-                //Linear
-                if (term1.Op.Method.Name.Equals("Power") ||
-                    term2.Op.Method.Name.Equals("Power"))
-                {
-                    return false;
-                }
+                        bool cond1 = term1.IsQuadraticTerm();
+                        bool cond2 = term2.IsQuadraticTerm();
 
-                if (lst1.Count != 2 || lst2.Count != 2) return false;
-                if (!lst1[1].Equals(lst2[1])) return false;
+                        bool quadrCond1 = cond1 && cond2;
+                        bool quadrCond2 = cond1 && !cond2 && (quadratic2 != null);
+                        bool quadrCond3 = !cond1 && (quadratic1 != null) && cond2;
+                        bool quadrCond4 = !cond1 && (quadratic1 != null) && !cond2 && (quadratic2 != null);
 
-                var newList = new List<object>() { lst1[0], lst2[0] };
-                var gTerm = new Term(Expression.Add, newList);
-                outputObj = new Term(Expression.Multiply, new List<object>() { gTerm, lst1[1] });
-                return true;
+                        if (quadrCond1)
+                        {
+                            if (!term1.MatchQuadraticTerm(term2)) return false;
+                            var newList1 = new List<object>() { 1, 1 };
+                            var gTerm1 = new Term(Expression.Add, newList1);
+                            outputObj = new Term(Expression.Multiply, new List<object>() { gTerm1, term1 });
+                            return true;
+                        }
+                        if (quadrCond2)
+                        {
+                            if (!term1.MatchQuadraticTerm(quadratic2)) return false;
+                            var newList2 = new List<object>() { 1, lst2[0] };
+                            var gTerm2 = new Term(Expression.Add, newList2);
+                            outputObj = new Term(Expression.Multiply, new List<object>() { gTerm2, term1 });
+                            return true;
+                        }
+                        if (quadrCond3)
+                        {
+                            if (!quadratic1.MatchQuadraticTerm(term2)) return false;
+                            var newList3 = new List<object>() {lst1[0], 1};
+                            var gTerm3 = new Term(Expression.Add, newList3);
+                            outputObj = new Term(Expression.Multiply, new List<object>() { gTerm3, term2 });
+                            return true;
+                        }
+                        if (quadrCond4)
+                        {
+                            if (!quadratic1.MatchQuadraticTerm(quadratic2)) return false;
+                            var newList4 = new List<object>() {lst1[0], lst2[0]};
+                            var gTerm4 = new Term(Expression.Add, newList4);
+                            outputObj = new Term(Expression.Multiply, new List<object>() { gTerm4, quadratic2 });
+                            return true;
+                        }
+                    }
+
+                    #endregion
+
+                    //Linear
+                    if (term1.Op.Method.Name.Equals("Power") ||
+                        term2.Op.Method.Name.Equals("Power"))
+                    {
+                        return false;
+                    }
+
+                    if (lst1.Count == 2 && lst2.Count == 2 && lst1[1].Equals(lst2[1]))
+                    {
+                        if (term1.Op.Method.Name.Equals("Multiply") &&
+                            term2.Op.Method.Name.Equals("Multiply"))
+                        {
+                            var newList = new List<object>() { lst1[0], lst2[0] };
+                            var gTerm = new Term(Expression.Add, newList);
+                            outputObj = new Term(Expression.Multiply, new List<object>() { gTerm, lst1[1] });
+                            return true;
+                        }
+                    }
+                } 
             }
             else if (inTerm.Op.Method.Name.Equals("Multiply"))
             {
@@ -554,7 +565,47 @@ namespace CSharpLogic
                 }
             }
 
-            return false;
+            return SatisfyDistributiveCondition2(inTerm, obj1, obj2, out outputObj);
+        }
+
+
+        private static bool SatisfyDistributiveCondition2(Term inTerm,
+            object obj1, object obj2, out object outputObj)
+        {
+            // x/3+9 -> (x+27)/3
+            //(2*x)/3+2 -> (2*x+6)/3
+
+            outputObj = null;
+
+            if (inTerm.Op.Method.Name.Equals("Add"))
+            {
+                var term1 = obj1 as Term;                
+                if (term1 != null && term1.Op.Method.Name.Equals("Divide"))
+                {
+                    var lst = term1.Args as List<object>;
+                    if (lst == null) return false;
+                    var numerator   = lst[0];
+                    var denominator = lst[1];
+
+                    var gTerm = new Term(Expression.Multiply, new List<object> {denominator, obj2});
+                    var newNumerator = new Term(Expression.Add, new List<object> {numerator, gTerm});
+                    outputObj = new Term(Expression.Divide, new List<object> {newNumerator, denominator});
+                    return true;
+                }
+                var term2 = obj2 as Term;
+                if (term2 != null && term2.Op.Method.Name.Equals("Divide"))
+                {
+                    var lst = term2.Args as List<object>;
+                    if (lst == null) return false;
+                    var numerator = lst[0];
+                    var denominator = lst[1];
+                    var gTerm = new Term(Expression.Multiply, new List<object> { obj1, denominator});
+                    var newNumerator = new Term(Expression.Add, new List<object> { gTerm, numerator});
+                    outputObj = new Term(Expression.Divide, new List<object> { newNumerator, denominator });
+                    return true;
+                }
+            }
+            return false;            
         }
 
         #endregion
@@ -603,6 +654,25 @@ namespace CSharpLogic
                 localTerm = cloneTerm;
             }
 
+            Term gTerm;
+            if (SatisfyAssociativeCondition2(localTerm, out gTerm))
+            {
+
+                //generate trace rule
+
+                string kc = AlgebraRule.RuleConcept(AlgebraRule.AlgebraRuleType.Associative);
+
+                string rule = AlgebraRule.Rule(
+                    AlgebraRule.AlgebraRuleType.Associative);
+
+                String appliedRule = AlgebraRule.Rule(
+                    AlgebraRule.AlgebraRuleType.Associative,
+                    list[0], list[1]);
+
+                rootTerm.GenerateTrace(localTerm, gTerm, kc, rule, appliedRule);
+                localTerm = gTerm;
+            }
+
             return localTerm;
         }
 
@@ -618,6 +688,26 @@ namespace CSharpLogic
 
                 if (term1 != null && term2 != null)
                 {
+                    if (term1.Op.Method.Name.Equals("Add") && 
+                        term2.Op.Method.Name.Equals("Add"))
+                    {
+                        var term1Args = term1.Args as List<object>;
+                        var term2Args = term2.Args as List<object>;
+
+                        if (term1Args != null && term2Args != null)
+                        {
+                            var term1Arg2 = term1Args[1];
+                            var term2Arg2 = term2Args[1];
+                            if (LogicSharp.IsNumeric(term1Arg2) &&
+                                LogicSharp.IsNumeric(term2Arg2))
+                            {
+                                output1 = new Term(Expression.Add, new List<object> {term1Args[0], term2Args[0]});
+                                output2 = new Term(Expression.Add, new List<object> {term1Arg2, term2Arg2});
+                                return true;
+                            }                            
+                        }
+                    }
+
 /*                    if (term1.Op.Method.Name.Equals("Add") && term2.Op.Method.Name.Equals("Multiply"))
                     {
                         var lst = term1.Args as List<object>;
@@ -679,25 +769,58 @@ namespace CSharpLogic
                 var term2 = obj2 as Term;
                 if (term1 == null && term2 != null)
                 {
-                    if (!term2.Op.Method.Name.Equals("Multiply")) return false;
-                    var lst = term2.Args as List<object>;
-                    Debug.Assert(lst != null);
-                    object obj = lst[0];
-                    if (LogicSharp.IsNumeric(obj) || NotSpecialVariables(obj))
+                    if (term2.Op.Method.Name.Equals("Multiply"))
                     {
-                        output1 = new Term(Expression.Multiply, new List<object>() { obj1, obj });
-                        var newLst = new List<object>();
-                        for (var i = 1; i < lst.Count; i++)
+                        var lst = term2.Args as List<object>;
+                        Debug.Assert(lst != null);
+                        object obj = lst[0];
+                        if (LogicSharp.IsNumeric(obj) || NotSpecialVariables(obj))
                         {
-                            newLst.Add(lst[i]);
+                            output1 = new Term(Expression.Multiply, new List<object>() { obj1, obj });
+                            var newLst = new List<object>();
+                            for (var i = 1; i < lst.Count; i++)
+                            {
+                                newLst.Add(lst[i]);
+                            }
+                            output2 = newLst.Count == 1 ? newLst[0] : new Term(Expression.Multiply, newLst);
+                            return true;
                         }
-                        output2 = newLst.Count == 1 ? newLst[0] : new Term(Expression.Multiply, newLst);
-                        return true;
                     }
                 }
             }
             return false;
         }
+
+        private static bool SatisfyAssociativeCondition2(Term inTerm, out Term gTerm)
+        {
+            gTerm = null;
+            if (!inTerm.Op.Method.Name.Equals("Multiply")) return false;
+            var lst = inTerm.Args as List<object>;
+
+            var term1 = lst[0] as Term;
+            var term2 = lst[1] as Term;
+
+            if (term1 != null && term1.Op.Method.Name.Equals("Divide"))
+            {
+                var arg1 = term1.Args as List<object>;
+                var numerator = new Term(Expression.Multiply, new List<object> { arg1[0], lst[1] });
+                var denominator = arg1[1];
+                gTerm = new Term(Expression.Divide, new List<object> {numerator, denominator});
+                return true;
+            }
+
+            if (term2 != null && term2.Op.Method.Name.Equals("Divide"))
+            {
+                var arg2 = term2.Args as List<object>;
+                var numerator = new Term(Expression.Multiply, new List<object> {lst[0], arg2[0]});
+                var denominator = arg2[1];
+                gTerm = new Term(Expression.Divide, new List<object> {numerator, denominator});
+                return true;
+            }
+
+            return false;
+        }
+
 
         private static bool NotSpecialVariables(object obj)
         {

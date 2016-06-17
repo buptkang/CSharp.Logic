@@ -458,20 +458,37 @@ namespace CSharpLogic
         }
 
         [Test]
-        public void Test_LineGen_2()
+        public void Test_TwoVariables_Linear_4()
         {
-            /* //4y=x
-             var x = new Var("x");
-             var y = new Var("y");
-             var term2 = new Term(Expression.Multiply, new List<object>() { 4, y });
-             var equation = new Equation(term2, x);
+            //y=x/3
+            var y = new Var('y');
+            var x = new Var('x');
+            var rhs = new Term(Expression.Divide, new List<object>() {x, 3});
+            var eq = new Equation(y, rhs);
 
-             object obj;
-             bool?  result = equation.Eval(out obj, true);
-             Assert.Null(result);
-             var outputEq = obj as Equation;
-             Assert.NotNull(outputEq);*/
+            object obj;
+            bool? result = eq.EvalEquation(out obj, true, true);
+            Assert.Null(result);
+            Assert.True(obj.ToString().Equals("-x+3y=0"));
         }
+
+        [Test]
+        public void Test_TwoVariables_Linear_5()
+        {
+            //y=(1/3)x
+            var y = new Var('y');
+            var x = new Var('x');
+            var term1 = new Term(Expression.Divide, new List<object>() { 1, 3 });
+            var rhs = new Term(Expression.Multiply, new List<object>() {term1, x});
+            var eq = new Equation(y, rhs);
+
+            object obj;
+            bool? result = eq.EvalEquation(out obj, true, true);
+            Assert.Null(result);
+            Assert.True(obj.ToString().Equals("-x+3y=0"));
+        }
+
+
 
         #endregion
 

@@ -14,10 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-using System.Linq;
-
 namespace CSharpLogic
 {
+    using System.Linq;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq.Expressions;
@@ -25,7 +24,7 @@ namespace CSharpLogic
     [TestFixture]
     public partial class EquationTest
     {
-        #region Arithmetic Only
+        #region Arithmetic Without Fraction
 
         [Test]
         public void Test_Arith_1()
@@ -114,5 +113,73 @@ namespace CSharpLogic
 
         #endregion
 
+        #region Arithmetic with Fraction
+
+        //1/1=1   -> 1=1
+        //1/2=1   -> 1=2
+        //2/3=4   -> 2=12
+        //(3+1)/4=5 -> 3+1=20
+
+        [Test]
+        public void Test_Arith_Frac_1()
+        {
+            //1/1=1   -> 1=1
+            var term1 = new Term(Expression.Divide, new List<object>() {1, 1});
+            var eq = new Equation(term1, 1);
+            object obj;
+            bool? flag = eq.Eval(out obj);
+            Assert.True(flag);
+            Assert.False(obj.Equals(eq));
+        }
+
+        [Test]
+        public void Test_Arith_Frac_2()
+        {
+            //1/2=1   -> 1=2
+            var term1 = new Term(Expression.Divide, new List<object>() { 1, 2});
+            var eq = new Equation(term1, 1);
+            object obj;
+            bool? flag = eq.Eval(out obj);
+            //Assert.True(flag);
+            Assert.False(obj.Equals(eq));
+            var gEq = obj as Equation;
+            Assert.NotNull(gEq);
+            Assert.True(gEq.Lhs.ToString().Equals("1"));
+            Assert.True(gEq.Rhs.ToString().Equals("2"));
+        }
+
+        [Test]
+        public void Test_Arith_Frac_3()
+        {
+            //2/3=4   -> 2=12
+            var term2 = new Term(Expression.Divide, new List<object>() {2, 3});
+            var eq = new Equation(term2, 4);
+
+            object obj;
+            bool? flag = eq.Eval(out obj);
+            //Assert.True(flag);
+            Assert.False(obj.Equals(eq));
+            var gEq = obj as Equation;
+            Assert.NotNull(gEq);
+            Assert.True(gEq.Lhs.ToString().Equals("2"));
+            Assert.True(gEq.Rhs.ToString().Equals("12"));
+        }
+
+        [Test]
+        public void Test_Arith_Frac_4()
+        {
+            //(3+1)/4=5 -> 3+1=20
+            var term1 = new Term(Expression.Add,    new List<object>() {3, 1});
+            var term2 = new Term(Expression.Divide, new List<object>() {term1, 4});
+            var eq = new Equation(term2, 5);
+            object obj;
+            bool? flag = eq.Eval(out obj);
+            var gEq = obj as Equation;
+            Assert.NotNull(gEq);
+            Assert.True(gEq.Lhs.ToString().Equals("4"));
+            Assert.True(gEq.Rhs.ToString().Equals("20"));
+        } 
+
+        #endregion
     }
 }

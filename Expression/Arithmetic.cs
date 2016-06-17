@@ -87,6 +87,8 @@ namespace CSharpLogic
                               object x, object y, out object output)
         {
             output = null;
+            if (func.Method.Name.Equals("Divide")) return false;
+
             if (LogicSharp.IsNumeric(x) && LogicSharp.IsNumeric(y))
             {
                 double xDoubleVal;

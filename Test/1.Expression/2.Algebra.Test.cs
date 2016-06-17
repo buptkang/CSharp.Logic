@@ -415,6 +415,33 @@ namespace CSharpLogic
             Assert.True(obj.ToString().Equals("3(x^2)+y"));
         }
 
+        [Test]
+        public void Test_Distributive_11()
+        {
+            //x/3+9 -> (x+27)/3
+            var x = new Var('x');
+            var term1 = new Term(Expression.Divide, new List<object>() { x, 3 });
+            var term2 = new Term(Expression.Add, new List<object>() { term1, 9 });
+
+            object obj = term2.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("(x+27)/3"));
+        }
+
+        [Test]
+        public void Test_Distributive_12()
+        {
+            //(2/3)x+2 -> (2*x+6)/3
+            var x = new Var('x');
+            var term1 = new Term(Expression.Divide, new List<object>() {2, 3});
+            var term2 = new Term(Expression.Multiply, new List<object>() {term1, x});
+            var term3 = new Term(Expression.Add, new List<object>(){term2, 2});
+
+            object obj = term3.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("(2x+6)/3"));
+        }
+
         #endregion
 
         #region Associative
@@ -443,6 +470,51 @@ namespace CSharpLogic
             Assert.NotNull(obj);
             Assert.True(obj.ToString().Equals("a+2"));
             Assert.True(term1.Traces.Count == 1);
+        }
+
+        [Test]
+        public void Test_Associative_3()
+        {
+            //(1/3)x -> (1*x)/3
+            var x = new Var('x');
+            var term = new Term(Expression.Divide, new List<object>() {1, 3});
+            var term1 = new Term(Expression.Multiply, new List<object>() {term, x});
+
+            object obj = term1.Eval();
+            Assert.NotNull(obj);
+            var gTerm = obj as Term;
+            Assert.NotNull(gTerm);
+            Assert.True(gTerm.Op.Method.Name.Equals("Divide"));
+            Assert.True(obj.ToString().Equals("x/3"));
+        }
+
+        [Test]
+        public void Test_Associative_4()
+        {
+            //(2/3)x -> (2*x)/3
+            var x = new Var('x');
+            var term = new Term(Expression.Divide, new List<object>() { 2, 3 });
+            var term1 = new Term(Expression.Multiply, new List<object>() { term, x });
+
+            object obj = term1.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("(2x)/3"));
+        }
+
+        [Test]
+        public void Test_Associative_5()
+        {
+//            //(x+1)+(y+1) -> x+y+2
+            var x = new Var('x');
+            var y = new Var('y');
+
+            var term1 = new Term(Expression.Add, new List<object>() {x, 1});
+            var term2 = new Term(Expression.Add, new List<object>() {y, 1});
+            var term = new Term(Expression.Add, new List<object>() {term1, term2});
+
+            object obj = term.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.ToString().Equals("x+y+2"));
         }
 
         #endregion

@@ -150,7 +150,7 @@ namespace CSharpLogic
 
                     var cloneEq = currentEq.Clone();
 
-                    var rhsTerm = new Term(Expression.Add, new List<object>() {cloneEq.Rhs});
+                    var rhsTerm = new Term(Expression.Add, new List<object>() { cloneEq.Rhs });
 
                     var lhsTerm = cloneEq.Lhs as Term;
                     Debug.Assert(lhsTerm != null);
@@ -164,7 +164,7 @@ namespace CSharpLogic
                         bool isNumber = LogicSharp.IsNumeric(temp);
                         if (isNumber)
                         {
-                            var inverseRhs = new Term(Expression.Multiply, new List<object>() {-1, temp});
+                            var inverseRhs = new Term(Expression.Multiply, new List<object>() { -1, temp });
                             lst.Remove(temp);
                             var rhsArgLst = rhsTerm.Args as List<object>;
                             Debug.Assert(rhsArgLst != null);
@@ -175,7 +175,7 @@ namespace CSharpLogic
                         var term = temp as Term;
                         if (term != null && !term.ContainsVar())
                         {
-                            var inverseRhs = new Term(Expression.Multiply, new List<object>() {-1, temp});
+                            var inverseRhs = new Term(Expression.Multiply, new List<object>() { -1, temp });
                             lst.Remove(i);
                             var rhsArgLst = rhsTerm.Args as List<object>;
                             Debug.Assert(rhsArgLst != null);
@@ -244,7 +244,7 @@ namespace CSharpLogic
                     rootEq._innerLoop.Add(traceStep);
                     localEq = cloneEq;
                     #endregion
-                }                
+                }
             }
 
             //Mutliply Inverse
@@ -364,9 +364,63 @@ namespace CSharpLogic
                 #endregion
             }
 
-      
-
             return localEq;
+        }
+
+        public static object ApplyTransitive2(this Equation currentEq,
+            Equation rootEq, bool withEqRule, bool lineCheck = false)
+        {
+            Equation localEq = currentEq;
+            object lhs = currentEq.Lhs;
+            object rhs = currentEq.Rhs;
+
+            if (!withEqRule) return localEq;
+
+            //Divide Transform
+            object newLhs, newRhs;
+            if (SatisfyTransitiveCondition5(lhs, rhs, out newLhs, out newRhs))
+            {
+                var cloneEq = currentEq.Clone();
+                var newEq = new Equation(newLhs, newRhs);
+                string rule = EquationsRule.Rule(EquationsRule.EquationRuleType.Transitive);
+                string appliedRule = EquationsRule.Rule(
+                              EquationsRule.EquationRuleType.Transitive,
+                              localEq, newEq);
+
+                string KC = EquationsRule.RuleConcept(EquationsRule.EquationRuleType.Transitive);
+
+                var traceStep = new TraceStep(localEq, newEq, KC, rule, appliedRule);
+                rootEq._innerLoop.Add(traceStep);
+                localEq = newEq;
+                return localEq;
+            }
+            return localEq;
+        }
+
+        private static bool SatisfyTransitiveCondition5(
+            object lhs, object rhs, out object newLhs, out object newRhs)
+        {
+            newLhs = null;
+            newRhs = null;
+            var lhsTerm = lhs as Term;
+            if (lhsTerm != null && lhsTerm.Op.Method.Name.Equals("Divide"))
+            {
+                var lst = lhsTerm.Args as List<object>;
+                Debug.Assert(lst != null);
+                Debug.Assert(lst.Count == 2);
+                newLhs = lst[0];
+                newRhs = new Term(Expression.Multiply, new List<object> { lst[1], rhs });
+                return true;
+            }
+            var rhsTerm = rhs as Term;
+            if (rhsTerm != null && rhsTerm.Op.Method.Name.Equals("Divide"))
+            {
+                var lst = rhsTerm.Args as List<object>;
+                newLhs = new Term(Expression.Multiply, new List<object> { lst[1], lhs });
+                newRhs = lst[0];
+                return true;
+            }
+            return false;
         }
 
         /*
@@ -465,10 +519,10 @@ namespace CSharpLogic
 
         private static bool SatisfyTransitiveCondition1(object lhs, object rhs)
         {
-              if (!0.0.Equals(rhs) && !0.Equals(rhs))
-              {
-                  return true;
-              }
+            if (!0.0.Equals(rhs) && !0.Equals(rhs))
+            {
+                return true;
+            }
             return false;
         }
     }

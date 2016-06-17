@@ -14,10 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-using System.Linq;
-
 namespace CSharpLogic
 {
+    using System.Linq;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq.Expressions;
@@ -25,22 +24,24 @@ namespace CSharpLogic
     [TestFixture]
     public partial class EquationTest
     {
+        #region Equation Substitution
+
         [Test]
-        public void Equation_Satisfy()
+        public void Equation_EqGoal_Satisfy()
         {
             //2=2
             var eq = new Equation(2, 2);
             object obj;
-            bool result = eq.IsEqGoal(out obj);            
+            bool result = eq.IsEqGoal(out obj);
             Assert.False(result);
 
             //3=4
-            eq = new Equation(3,4);
+            eq = new Equation(3, 4);
             result = eq.IsEqGoal(out obj);
             Assert.False(result);
 
             //3=5-2
-            var term = new Term(Expression.Add, new List<object>() {5, -2});
+            var term = new Term(Expression.Add, new List<object>() { 5, -2 });
             eq = new Equation(3, term);
             result = eq.IsEqGoal(out obj);
             Assert.False(result);
@@ -49,21 +50,21 @@ namespace CSharpLogic
             //TODO
             var variable = new Var('x');
             eq = new Equation(variable, variable);
-/*            result = eq.IsEqGoal(out obj);
-            Assert.True(result);*/
+            /*            result = eq.IsEqGoal(out obj);
+                        Assert.True(result);*/
 
             //x = 2x-x
             //TODO
-            term      = new Term(Expression.Multiply, new List<object>(){2, variable});
+            term = new Term(Expression.Multiply, new List<object>() { 2, variable });
             var term0 = new Term(Expression.Multiply, new List<object>() { -1, variable });
-            var term1 = new Term(Expression.Add, new List<object>() {term, term0});
+            var term1 = new Term(Expression.Add, new List<object>() { term, term0 });
             eq = new Equation(variable, term1);
-/*            result = eq.IsEqGoal(out obj);
-            Assert.True(result);*/
+            /*            result = eq.IsEqGoal(out obj);
+                        Assert.True(result);*/
         }
 
         [Test]
-        public void Goal_Gen_13()
+        public void Equation_Var_Substitution_1()
         {
             //a = 1, a*b = -1;
             var a = new Var("a");
@@ -86,7 +87,7 @@ namespace CSharpLogic
         }
 
         [Test]
-        public void Goal_Gen_14()
+        public void Equation_Var_Substitution_2()
         {
             //14: a = 2, b=a
             var a = new Var("a");
@@ -107,9 +108,9 @@ namespace CSharpLogic
         }
 
         [Test]
-        public void Goal_Gen_15()
+        public void Equation_Var_Substitution_3()
         {
-            //14: a = 2, b=a
+            //a = 2, b=a
             var a = new Var("a");
             var b = new Var("b");
             var eqGoal = new EqGoal(a, 2);
@@ -127,21 +128,20 @@ namespace CSharpLogic
             Assert.True(gGoal.Rhs.Equals(2));
         }
 
-        //TODO
-        public void Goal_Gen_1()
+        [Test]
+        public void Equation_Var_Substitution_4()
         {
-            //x = 3
+            //x = 3, x = y
             var x = new Var('a');
-            var eq = new Equation(x, 3);
-            object obj;
-            bool result = eq.IsEqGoal(out obj);
-            Assert.True(result);
-
-            //x = y
+            var eq1 = new EqGoal(x, 3); // x=3
             var y = new Var('y');
-            eq = new Equation(x, y);
-            result = eq.IsEqGoal(out obj);
+            var eq2 = new Equation(x, y); // x=y
+
+            bool result = eq2.Reify(eq1);
             Assert.True(result);
+            Assert.True(eq2.CachedEntities.Count == 1);
         }
+
+        #endregion
     }
 }
