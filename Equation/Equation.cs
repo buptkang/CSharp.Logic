@@ -20,6 +20,7 @@ namespace CSharpLogic
 {
     using System.Collections.Generic;
 
+    [Serializable]
     public partial class Equation : DyLogicObject, IEquationLogic, IEval
     {
         #region Properties and Constructors

@@ -408,17 +408,25 @@ namespace CSharpLogic
                 var lst = lhsTerm.Args as List<object>;
                 Debug.Assert(lst != null);
                 Debug.Assert(lst.Count == 2);
-                newLhs = lst[0];
-                newRhs = new Term(Expression.Multiply, new List<object> { lst[1], rhs });
-                return true;
+                bool denomIsNum = LogicSharp.IsNumeric(lst[1]);
+                if (denomIsNum)
+                {
+                    newLhs = lst[0];
+                    newRhs = new Term(Expression.Multiply, new List<object> { lst[1], rhs });
+                    return true;                    
+                }
             }
             var rhsTerm = rhs as Term;
             if (rhsTerm != null && rhsTerm.Op.Method.Name.Equals("Divide"))
             {
                 var lst = rhsTerm.Args as List<object>;
-                newLhs = new Term(Expression.Multiply, new List<object> { lst[1], lhs });
-                newRhs = lst[0];
-                return true;
+                bool denomIsNum = LogicSharp.IsNumeric(lst[1]);
+                if (denomIsNum)
+                {
+                    newLhs = new Term(Expression.Multiply, new List<object> { lst[1], lhs });
+                    newRhs = lst[0];
+                    return true;                    
+                }
             }
             return false;
         }
@@ -469,6 +477,7 @@ namespace CSharpLogic
          */
         private static bool SatisfyTransitiveCondition3(object lhs, object rhs)
         {
+            return false;
             bool rhsNumeric = LogicSharp.IsNumeric(rhs);
             if (!rhsNumeric) return false;
 

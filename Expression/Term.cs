@@ -204,6 +204,7 @@ namespace CSharpLogic
                     }
                     else
                     {
+                        if (curr1 == null || curr2 == null) return false;
                         result = curr1.Equals(curr2);
                     }
                     if (!result) return false;
